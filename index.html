@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Nomen-Verb-Verbindungen Trainer (B1/B2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- ================= SPLASH SCREEN ================= -->
+<div id="splash-screen" class="splash-screen">
+  <div class="splash-content">
+    <div class="splash-icon">🚀</div>
+    <h1 class="splash-title">Engyzmo</h1>
+    <p class="splash-subtitle">Lerne clever, nicht hart!</p> <!-- جملة تحفيزية: تعلم بذكاء وليس بجهد -->
+  </div>
+</div>
+<header class="topbar">
+  <h1>🇩🇪 Nomen-Verb-Verbindungen <span>B1 / B2</span></h1>
+  <nav class="main-nav">
+    <button id="nav-study" class="nav-btn active">📖 Study Mode</button>
+    <button id="nav-practice" class="nav-btn">✏️ Practice Mode</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= STUDY MODE ================= -->
+  <section id="study-section" class="view active">
+
+    <div class="sub-nav">
+      <button class="sub-btn active" data-target="reading">📝 Lesetexte</button>
+      <button class="sub-btn" data-target="flashcards">🃏 Flashcards</button>
+    </div>
+
+    <div id="reading" class="sub-view active">
+      <p class="hint">✨ Die markierten Wörter sind die Nomen-Verb-Verbindungen. (Tippe auf ein markiertes Wort für die Bedeutung)</p>
+      <div class="text-card">
+        <h2>☀️ Text 1: Aktive Erholung und Entdeckungen in der Stadt</h2>
+        <p id="text1"></p>
+      </div>
+      <div class="text-card">
+        <h2>🎨 Text 2: Kunst, Kultur und soziales Leben</h2>
+        <p id="text2"></p>
+      </div>
+    </div>
+
+    <div id="flashcards" class="sub-view">
+
+      <div class="fc-toggle">
+        <button class="fc-toggle-btn active" data-fcview="overview-view">🗂️ Überblick</button>
+        <button class="fc-toggle-btn" data-fcview="study-view">🎯 Lernmodus</button>
+        <button class="fc-toggle-btn" data-fcview="review-view">🔁 Needs Review <span id="review-badge">0</span></button>
+      </div>
+
+      <!-- Overview grid -->
+      <div id="overview-view" class="fc-view active">
+        <div id="flashcard-grid" class="flashcard-grid"></div>
+      </div>
+
+      <!-- Single-card study mode -->
+      <div id="study-view" class="fc-view">
+        <div class="study-topbar">
+          <span id="study-progress-label">Karte 1 / 40</span>
+          <button id="study-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
+        </div>
+        <div class="study-progress-track">
+          <div id="study-progress-fill" class="study-progress-fill"></div>
+        </div>
+
+        <div class="study-stage">
+          <button id="study-prev" class="study-arrow" type="button" aria-label="Zurück">◀</button>
+
+          <div id="study-card" class="study-card">
+            <div class="study-card-inner">
+              <div class="study-face study-front">
+                <span class="study-badge">Tippen zum Umdrehen 👆</span>
+                <strong id="study-front-text"></strong>
+              </div>
+              <div class="study-face study-back">
+                <div id="study-back-german" class="study-german"></div>
+                <div id="study-back-arabic" class="study-arabic"></div>
+                <div id="study-back-example" class="study-example"></div>
+                <button id="study-review-btn" class="review-btn" type="button">🔁 Needs Review</button>
+              </div>
+            </div>
+          </div>
+
+          <button id="study-next" class="study-arrow" type="button" aria-label="Weiter">▶</button>
+        </div>
+
+        <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
+      </div>
+
+      <!-- Review Mode -->
+      <div id="review-view" class="fc-view">
+        <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
+        <div id="review-grid" class="flashcard-grid"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ================= PRACTICE MODE ================= -->
+  <section id="practice-section" class="view">
+
+    <div class="sub-nav">
+      <button class="sub-btn active" data-target="mcq">1️⃣ Multiple Choice</button>
+      <button class="sub-btn" data-target="dragdrop">2️⃣ Drag &amp; Drop</button>
+      <button class="sub-btn" data-target="fillblank">3️⃣ Lückentext</button>
+    </div>
+
+    <div id="mcq" class="sub-view active exercise-block">
+      <h2>Übung 1: Wähle die richtige Verbindung</h2>
+      <p class="hint">Wähle für jede arabische Bedeutung die passende deutsche Verbindung.</p>
+      <div id="mcq-container"></div>
+      <div id="mcq-score" class="score-box"></div>
+    </div>
+
+    <div id="dragdrop" class="sub-view exercise-block">
+      <h2>Übung 2: Ziehe das passende Verb in die Lücke</h2>
+      <p class="hint">Ziehe die Verben aus der Box unten in die richtige Lücke. Fehler werden sofort angezeigt. (Tippe auf eine ausgefüllte Lücke, um sie zurückzusetzen.)</p>
+      <div class="dnd-wrapper">
+        <div id="drop-zones" class="drop-zones"></div>
+        <div id="verb-bank" class="verb-bank"></div>
+      </div>
+      <button id="reset-dnd" class="secondary-btn">Zurücksetzen</button>
+    </div>
+
+    <div id="fillblank" class="sub-view exercise-block">
+      <h2>Übung 3: Ergänze die Lücken im Kontext</h2>
+      <p class="hint">Schreibe die passende Verbform in die Lücke und drücke Enter (oder tippe außerhalb).</p>
+      <div id="fillblank-container"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
