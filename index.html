@@ -67,16 +67,65 @@
   </header>
   <main class="dashboard-main">
     <div class="dash-grid">
+      <!-- Lesson 1 -->
       <div class="dash-card" onclick="openPage('page-neueheimat')">
         <div class="icon">🌍</div>
         <h3>Kapitel 1: Heimat ist...</h3>
         <p>Neue Heimat</p>
       </div>
+      <!-- Lesson 2 (NEW) -->
+      <div class="dash-card" onclick="openPage('page-muttersprache')">
+        <div class="icon">🇨🇭</div>
+        <h3>Kapitel 1: Heimat ist...</h3>
+        <p>Unsere Muttersprache</p>
+      </div>
     </div>
   </main>
 </div>
 
-<!-- ================= TOPIC: NEUE HEIMAT ================= -->
+<!-- ================= TOPIC 1: KRACH IN DER W.G ================= -->
+<div id="page-krach" class="page-view">
+  <header class="topbar">
+    <button class="back-btn" onclick="openPage('page-hoeren')">⬅ Zurück</button>
+    <h1>🗣️ Krach in der W.G</h1>
+  </header>
+  <main>
+    <div class="sub-nav">
+      <button class="sub-btn active" onclick="switchTopicTab('krach', 'lesetext', this)">📝 Lesetext</button>
+      <button class="sub-btn" onclick="switchTopicTab('krach', 'flashcards', this)">🃏 Flashcards</button>
+    </div>
+    <div id="krach-lesetext" class="sub-view active"><p class="hint">✨ Tippe auf die markierten Wörter.</p><div class="text-card"><div id="krach-text-container" class="lesetext-content"></div></div></div>
+    <div id="krach-flashcards" class="sub-view">
+      <div class="fc-toggle">
+        <button class="fc-toggle-btn active" data-fcview="krach-overview-view">🗂️ Überblick</button>
+        <button class="fc-toggle-btn" data-fcview="krach-study-view">🎯 Lernmodus</button>
+        <button class="fc-toggle-btn" data-fcview="krach-review-view">🔁 Review <span id="krach-review-badge">0</span></button>
+      </div>
+      <div id="krach-overview-view" class="fc-view active"><div id="krach-flashcard-grid" class="flashcard-grid"></div></div>
+      <div id="krach-study-view" class="fc-view">
+        <div class="study-topbar"><span id="krach-progress-label">Karte 1 / 0</span><button id="krach-shuffle" class="mini-btn" type="button">🔀 Mischen</button></div>
+        <div class="study-progress-track"><div id="krach-progress-fill" class="study-progress-fill"></div></div>
+        <div class="study-stage">
+          <button id="krach-prev" class="study-arrow" type="button">◀</button>
+          <div id="krach-card" class="study-card"><div class="study-card-inner">
+            <div class="study-face study-front"><span class="study-badge">Tippen zum Umdrehen 👆</span><strong id="krach-front-text"></strong></div>
+            <div class="study-face study-back flashcard-back-v2">
+              <div class="fc-section fc-bedeutung"><span class="fc-label">Bedeutung:</span><h3 id="krach-back-arabic" class="arabic-text"></h3></div><hr class="fc-divider">
+              <div class="fc-section fc-synonyme"><span class="fc-label">Synonyme / Alternativen:</span><p id="krach-back-synonyme"></p></div>
+              <div class="fc-section fc-text-beispiel"><span class="fc-icon">📖</span><p id="krach-back-textbeispiel"></p></div>
+              <div class="fc-section fc-neues-beispiel"><span class="fc-icon">💡</span><p id="krach-back-neuesbeispiel"></p></div>
+              <button id="krach-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
+            </div>
+          </div></div>
+          <button id="krach-next" class="study-arrow" type="button">▶</button>
+        </div>
+      </div>
+      <div id="krach-review-view" class="fc-view"><div id="krach-review-grid" class="flashcard-grid"></div></div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= TOPIC 2: NEUE HEIMAT ================= -->
 <div id="page-neueheimat" class="page-view">
   <header class="topbar">
     <button class="back-btn" onclick="openPage('page-aspekte')">⬅ Zurück</button>
@@ -88,179 +137,150 @@
       <button class="sub-btn" onclick="switchTopicTab('neueheimat', 'flashcards', this)">🃏 Flashcards</button>
       <button class="sub-btn" onclick="switchTopicTab('neueheimat', 'practice', this)">✏️ Übungen</button>
     </div>
-
-    <!-- Lesetext -->
-    <div id="neueheimat-lesetext" class="sub-view active">
-      <p class="hint">✨ Tippe auf die markierten Wörter, um die Bedeutung zu sehen.</p>
-      <div class="text-card">
-        <div id="neueheimat-text-container" class="lesetext-content"></div>
-      </div>
-    </div>
-
-    <!-- Flashcards -->
+    <div id="neueheimat-lesetext" class="sub-view active"><p class="hint">✨ Tippe auf die markierten Wörter.</p><div class="text-card"><div id="neueheimat-text-container" class="lesetext-content"></div></div></div>
     <div id="neueheimat-flashcards" class="sub-view">
       <div class="fc-toggle">
         <button class="fc-toggle-btn active" data-fcview="neueheimat-overview-view">🗂️ Überblick</button>
         <button class="fc-toggle-btn" data-fcview="neueheimat-study-view">🎯 Lernmodus</button>
-        <button class="fc-toggle-btn" data-fcview="neueheimat-review-view">🔁 Needs Review <span id="neueheimat-review-badge">0</span></button>
+        <button class="fc-toggle-btn" data-fcview="neueheimat-review-view">🔁 Review <span id="neueheimat-review-badge">0</span></button>
       </div>
-
-      <div id="neueheimat-overview-view" class="fc-view active">
-        <div id="neueheimat-flashcard-grid" class="flashcard-grid"></div>
-      </div>
-
+      <div id="neueheimat-overview-view" class="fc-view active"><div id="neueheimat-flashcard-grid" class="flashcard-grid"></div></div>
       <div id="neueheimat-study-view" class="fc-view">
-        <div class="study-topbar">
-          <span id="neueheimat-progress-label">Karte 1 / 0</span>
-          <button id="neueheimat-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
-        </div>
-        <div class="study-progress-track">
-          <div id="neueheimat-progress-fill" class="study-progress-fill"></div>
-        </div>
-
+        <div class="study-topbar"><span id="neueheimat-progress-label">Karte 1 / 0</span><button id="neueheimat-shuffle" class="mini-btn" type="button">🔀 Mischen</button></div>
+        <div class="study-progress-track"><div id="neueheimat-progress-fill" class="study-progress-fill"></div></div>
         <div class="study-stage">
           <button id="neueheimat-prev" class="study-arrow" type="button">◀</button>
-          <div id="neueheimat-card" class="study-card">
-            <div class="study-card-inner">
-              <div class="study-face study-front">
-                <span class="study-badge">Tippen zum Umdrehen 👆</span>
-                <strong id="neueheimat-front-text"></strong>
-              </div>
-              <div class="study-face study-back flashcard-back-v2">
-                <div class="fc-section fc-bedeutung">
-                  <span class="fc-label">Bedeutung:</span>
-                  <h3 id="neueheimat-back-arabic" class="arabic-text"></h3>
-                </div>
-                <hr class="fc-divider">
-                <div class="fc-section fc-synonyme">
-                  <span class="fc-label">Bedeutung (DE) / Synonyme:</span>
-                  <p id="neueheimat-back-synonyme"></p>
-                </div>
-                <div class="fc-section fc-text-beispiel">
-                  <span class="fc-icon">📖</span>
-                  <p id="neueheimat-back-textbeispiel"></p>
-                </div>
-                <div class="fc-section fc-neues-beispiel">
-                  <span class="fc-icon">💡</span>
-                  <p id="neueheimat-back-neuesbeispiel"></p>
-                </div>
-                <button id="neueheimat-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
-              </div>
+          <div id="neueheimat-card" class="study-card"><div class="study-card-inner">
+            <div class="study-face study-front"><span class="study-badge">Tippen zum Umdrehen 👆</span><strong id="neueheimat-front-text"></strong></div>
+            <div class="study-face study-back flashcard-back-v2">
+              <div class="fc-section fc-bedeutung"><span class="fc-label">Bedeutung:</span><h3 id="neueheimat-back-arabic" class="arabic-text"></h3></div><hr class="fc-divider">
+              <div class="fc-section fc-synonyme"><span class="fc-label">Bedeutung (DE) / Synonyme:</span><p id="neueheimat-back-synonyme"></p></div>
+              <div class="fc-section fc-text-beispiel"><span class="fc-icon">📖</span><p id="neueheimat-back-textbeispiel"></p></div>
+              <div class="fc-section fc-neues-beispiel"><span class="fc-icon">💡</span><p id="neueheimat-back-neuesbeispiel"></p></div>
+              <button id="neueheimat-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
             </div>
-          </div>
+          </div></div>
           <button id="neueheimat-next" class="study-arrow" type="button">▶</button>
         </div>
-        <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
       </div>
-
-      <div id="neueheimat-review-view" class="fc-view">
-        <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
-        <div id="neueheimat-review-grid" class="flashcard-grid"></div>
-      </div>
+      <div id="neueheimat-review-view" class="fc-view"><div id="neueheimat-review-grid" class="flashcard-grid"></div></div>
     </div>
-
-    <!-- Practice (Übungen) -->
     <div id="neueheimat-practice" class="sub-view exercise-block">
       <div class="fc-toggle" style="margin-bottom: 20px;">
         <button class="fc-toggle-btn active" onclick="switchPracticeTab('neueheimat', 'tekamolo', this)">1️⃣ TEKAMOLO</button>
         <button class="fc-toggle-btn" onclick="switchPracticeTab('neueheimat', 'mcq', this)">2️⃣ MCQ Übung</button>
       </div>
-      
-      <!-- TEKAMOLO Tab -->
       <div id="neueheimat-tekamolo" class="practice-tab active">
-        <h2>Satzbau: TEKAMOLO Regel</h2>
-        <p class="hint">Bilde den perfekten Satz! <b>Halte ein Wort gedrückt und ziehe es (Drag & Drop)</b> an die richtige Position.</p>
+        <h2>Satzbau: TEKAMOLO Regel</h2><p class="hint">Halte ein Wort gedrückt und ziehe es (Drag & Drop) an die richtige Position.</p>
         <div id="tekamolo-container"></div>
       </div>
-
-      <!-- MCQ Tab -->
-      <!-- تم إزالة الـ style="display:none;" من هنا لكي تعمل أزرار التنقل بشكل صحيح -->
-      <div id="neueheimat-mcq" class="practice-tab">
-        <h2>Wortschatz: Bedeutung im Kontext</h2>
-        <p class="hint">Lies den Satz und wähle die richtige arabische Bedeutung für den markierten Ausdruck.</p>
-        <div id="nh-mcq-container"></div>
-      </div>
+      <div id="neueheimat-mcq" class="practice-tab"><div id="nh-mcq-container"></div></div>
     </div>
   </main>
 </div>
 
-<!-- ================= TOPIC: KRACH IN DER W.G ================= -->
-<div id="page-krach" class="page-view">
+<!-- ================= TOPIC 3: UNSERE MUTTERSPRACHE (NEW) ================= -->
+<div id="page-muttersprache" class="page-view">
   <header class="topbar">
-    <button class="back-btn" onclick="openPage('page-hoeren')">⬅ Zurück</button>
-    <h1>🗣️ Krach in der W.G</h1>
+    <button class="back-btn" onclick="openPage('page-aspekte')">⬅ Zurück</button>
+    <h1>🇨🇭 Unsere Muttersprache</h1>
   </header>
   <main>
     <div class="sub-nav">
-      <button class="sub-btn active" onclick="switchTopicTab('krach', 'lesetext', this)">📝 Lesetext</button>
-      <button class="sub-btn" onclick="switchTopicTab('krach', 'flashcards', this)">🃏 Flashcards</button>
+      <button class="sub-btn active" onclick="switchTopicTab('muttersprache', 'lesetext', this)">📝 Lesetext</button>
+      <button class="sub-btn" onclick="switchTopicTab('muttersprache', 'flashcards', this)">🃏 Flashcards</button>
+      <button class="sub-btn" onclick="switchTopicTab('muttersprache', 'practice', this)">✏️ Übungen</button>
     </div>
 
-    <div id="krach-lesetext" class="sub-view active">
+    <!-- Lesetext -->
+    <div id="muttersprache-lesetext" class="sub-view active">
       <p class="hint">✨ Tippe auf die markierten Wörter, um die Bedeutung zu sehen.</p>
       <div class="text-card">
-        <div id="krach-text-container" class="lesetext-content"></div>
+        <div id="muttersprache-text-container" class="lesetext-content"></div>
       </div>
     </div>
 
-    <div id="krach-flashcards" class="sub-view">
+    <!-- Flashcards -->
+    <div id="muttersprache-flashcards" class="sub-view">
       <div class="fc-toggle">
-        <button class="fc-toggle-btn active" data-fcview="krach-overview-view">🗂️ Überblick</button>
-        <button class="fc-toggle-btn" data-fcview="krach-study-view">🎯 Lernmodus</button>
-        <button class="fc-toggle-btn" data-fcview="krach-review-view">🔁 Needs Review <span id="krach-review-badge">0</span></button>
+        <button class="fc-toggle-btn active" data-fcview="muttersprache-overview-view">🗂️ Überblick</button>
+        <button class="fc-toggle-btn" data-fcview="muttersprache-study-view">🎯 Lernmodus</button>
+        <button class="fc-toggle-btn" data-fcview="muttersprache-review-view">🔁 Needs Review <span id="muttersprache-review-badge">0</span></button>
       </div>
 
-      <div id="krach-overview-view" class="fc-view active">
-        <div id="krach-flashcard-grid" class="flashcard-grid"></div>
+      <div id="muttersprache-overview-view" class="fc-view active">
+        <div id="muttersprache-flashcard-grid" class="flashcard-grid"></div>
       </div>
 
-      <div id="krach-study-view" class="fc-view">
+      <div id="muttersprache-study-view" class="fc-view">
         <div class="study-topbar">
-          <span id="krach-progress-label">Karte 1 / 0</span>
-          <button id="krach-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
+          <span id="muttersprache-progress-label">Karte 1 / 0</span>
+          <button id="muttersprache-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
         </div>
         <div class="study-progress-track">
-          <div id="krach-progress-fill" class="study-progress-fill"></div>
+          <div id="muttersprache-progress-fill" class="study-progress-fill"></div>
         </div>
 
         <div class="study-stage">
-          <button id="krach-prev" class="study-arrow" type="button">◀</button>
-          <div id="krach-card" class="study-card">
+          <button id="muttersprache-prev" class="study-arrow" type="button">◀</button>
+          <div id="muttersprache-card" class="study-card">
             <div class="study-card-inner">
               <div class="study-face study-front">
                 <span class="study-badge">Tippen zum Umdrehen 👆</span>
-                <strong id="krach-front-text"></strong>
+                <strong id="muttersprache-front-text"></strong>
               </div>
               <div class="study-face study-back flashcard-back-v2">
                 <div class="fc-section fc-bedeutung">
                   <span class="fc-label">Bedeutung:</span>
-                  <h3 id="krach-back-arabic" class="arabic-text"></h3>
+                  <h3 id="muttersprache-back-arabic" class="arabic-text"></h3>
                 </div>
                 <hr class="fc-divider">
                 <div class="fc-section fc-synonyme">
-                  <span class="fc-label">Synonyme / Alternativen:</span>
-                  <p id="krach-back-synonyme"></p>
+                  <span class="fc-label">Bedeutung (DE) / Synonyme:</span>
+                  <p id="muttersprache-back-synonyme"></p>
                 </div>
                 <div class="fc-section fc-text-beispiel">
                   <span class="fc-icon">📖</span>
-                  <p id="krach-back-textbeispiel"></p>
+                  <p id="muttersprache-back-textbeispiel"></p>
                 </div>
                 <div class="fc-section fc-neues-beispiel">
                   <span class="fc-icon">💡</span>
-                  <p id="krach-back-neuesbeispiel"></p>
+                  <p id="muttersprache-back-neuesbeispiel"></p>
                 </div>
-                <button id="krach-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
+                <button id="muttersprache-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
               </div>
             </div>
           </div>
-          <button id="krach-next" class="study-arrow" type="button">▶</button>
+          <button id="muttersprache-next" class="study-arrow" type="button">▶</button>
         </div>
         <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
       </div>
 
-      <div id="krach-review-view" class="fc-view">
+      <div id="muttersprache-review-view" class="fc-view">
         <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
-        <div id="krach-review-grid" class="flashcard-grid"></div>
+        <div id="muttersprache-review-grid" class="flashcard-grid"></div>
+      </div>
+    </div>
+
+    <!-- Practice (Übungen) -->
+    <div id="muttersprache-practice" class="sub-view exercise-block">
+      <div class="fc-toggle" style="margin-bottom: 20px;">
+        <button class="fc-toggle-btn active" onclick="switchPracticeTab('muttersprache', 'passiv', this)">1️⃣ Aktiv / Passiv</button>
+        <button class="fc-toggle-btn" onclick="switchPracticeTab('muttersprache', 'mcq', this)">2️⃣ MCQ Übung</button>
+      </div>
+      
+      <!-- Passiv Tab -->
+      <div id="muttersprache-passiv" class="practice-tab active">
+        <h2>Grammatik: Aktiv und Passiv</h2>
+        <p class="hint">Wandle den Satz um: Wenn er im Aktiv steht, schreibe ihn im Passiv. Wenn er im Passiv steht, schreibe ihn im Aktiv.</p>
+        <div id="ms-passiv-container"></div>
+      </div>
+
+      <!-- MCQ Tab -->
+      <div id="muttersprache-mcq" class="practice-tab">
+        <h2>Wortschatz: Bedeutung im Kontext</h2>
+        <p class="hint">Lies den Satz und wähle die richtige arabische Bedeutung für den markierten Ausdruck.</p>
+        <div id="ms-mcq-container"></div>
       </div>
     </div>
   </main>
@@ -268,7 +288,6 @@
 
 <div id="toast" class="toast"></div>
 <div id="custom-tooltip" class="custom-tooltip hidden"></div>
-
 <script src="script.js"></script>
 </body>
 </html>
