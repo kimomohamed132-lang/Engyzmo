@@ -71,9 +71,8 @@
     <h1>📖 Aspekte neu <span>B2</span></h1>
   </header>
   <main class="dashboard-main">
-    <!-- تمت إضافة القسم الجديد هنا -->
     <div class="dash-grid">
-      <div class="dash-card" onclick="openPage('page-neue-heimat')">
+      <div class="dash-card" onclick="openPage('page-neueheimat')">
         <div class="icon">🌍</div>
         <h3>Kapitel 1: Heimat ist...</h3>
         <p>Neue Heimat</p>
@@ -83,7 +82,7 @@
 </div>
 
 <!-- ================= TOPIC: NEUE HEIMAT ================= -->
-<div id="page-neue-heimat" class="page-view">
+<div id="page-neueheimat" class="page-view">
   <header class="topbar">
     <button class="back-btn" onclick="openPage('page-aspekte')">⬅ Zurück</button>
     <h1>🌍 Neue Heimat</h1>
@@ -92,6 +91,7 @@
     <div class="sub-nav">
       <button class="sub-btn active" onclick="switchTopicTab('neueheimat', 'lesetext', this)">📝 Lesetext</button>
       <button class="sub-btn" onclick="switchTopicTab('neueheimat', 'flashcards', this)">🃏 Flashcards</button>
+      <button class="sub-btn" onclick="switchTopicTab('neueheimat', 'practice', this)">✏️ Übungen</button>
     </div>
 
     <!-- Lesetext -->
@@ -163,6 +163,28 @@
         <div id="neueheimat-review-grid" class="flashcard-grid"></div>
       </div>
     </div>
+
+    <!-- Practice (Übungen) -->
+    <div id="neueheimat-practice" class="sub-view exercise-block">
+      <div class="fc-toggle" style="margin-bottom: 20px;">
+        <button class="fc-toggle-btn active" onclick="switchPracticeTab('neueheimat', 'tekamolo', this)">1️⃣ TEKAMOLO</button>
+        <button class="fc-toggle-btn" onclick="switchPracticeTab('neueheimat', 'mcq', this)">2️⃣ MCQ Übung</button>
+      </div>
+      
+      <!-- TEKAMOLO Tab -->
+      <div id="neueheimat-tekamolo" class="practice-tab active">
+        <h2>Satzbau: TEKAMOLO Regel</h2>
+        <p class="hint">Klicke auf ein Wort und dann auf die Zielposition, um die Wörter zu tauschen. Bilde den perfekten Satz nach der TEKAMOLO-Regel!</p>
+        <div id="tekamolo-container"></div>
+      </div>
+
+      <!-- MCQ Tab -->
+      <div id="neueheimat-mcq" class="practice-tab" style="display:none;">
+        <h2>Wortschatz: Bedeutung im Kontext</h2>
+        <p class="hint">Lies den Satz und wähle die richtige arabische Bedeutung für den unterstrichenen Ausdruck.</p>
+        <div id="nh-mcq-container"></div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -178,7 +200,6 @@
       <button class="sub-btn" onclick="switchTopicTab('krach', 'flashcards', this)">🃏 Flashcards</button>
     </div>
 
-    <!-- Lesetext -->
     <div id="krach-lesetext" class="sub-view active">
       <p class="hint">✨ Tippe auf die markierten Wörter, um die Bedeutung zu sehen.</p>
       <div class="text-card">
@@ -186,7 +207,6 @@
       </div>
     </div>
 
-    <!-- Flashcards -->
     <div id="krach-flashcards" class="sub-view">
       <div class="fc-toggle">
         <button class="fc-toggle-btn active" data-fcview="krach-overview-view">🗂️ Überblick</button>
@@ -250,7 +270,7 @@
   </main>
 </div>
 
-<!-- ================= TOPIC: FREIZEIT ================= -->
+<!-- ================= TOPIC: FREIZEIT (THE MAIN APP) ================= -->
 <div id="page-freizeit" class="page-view">
   <header class="topbar">
     <button class="back-btn" onclick="openPage('page-home')">⬅ Zurück</button>
