@@ -28,11 +28,6 @@
   <main class="dashboard-main">
     <h2 class="dash-title">Wähle einen Bereich</h2>
     <div class="dash-grid">
-      <div class="dash-card" onclick="openPage('page-freizeit')">
-        <div class="icon">⛺</div>
-        <h3>Freizeit</h3>
-        <p>Nomen-Verb-Verbindungen</p>
-      </div>
       <div class="dash-card" onclick="openPage('page-hoeren')">
         <div class="icon">🎧</div>
         <h3>Hören und Sprechen B2</h3>
@@ -171,10 +166,10 @@
         <button class="fc-toggle-btn" onclick="switchPracticeTab('neueheimat', 'mcq', this)">2️⃣ MCQ Übung</button>
       </div>
       
-      <!-- TEKAMOLO Tab -->
+      <!-- TEKAMOLO Tab (Mobile Drag & Drop) -->
       <div id="neueheimat-tekamolo" class="practice-tab active">
         <h2>Satzbau: TEKAMOLO Regel</h2>
-        <p class="hint">Klicke auf ein Wort und dann auf die Zielposition, um die Wörter zu tauschen. Bilde den perfekten Satz nach der TEKAMOLO-Regel!</p>
+        <p class="hint">Bilde den perfekten Satz! <b>Halte ein Wort gedrückt und ziehe es (Drag & Drop)</b> an die richtige Position.</p>
         <div id="tekamolo-container"></div>
       </div>
 
@@ -267,95 +262,6 @@
         <div id="krach-review-grid" class="flashcard-grid"></div>
       </div>
     </div>
-  </main>
-</div>
-
-<!-- ================= TOPIC: FREIZEIT (THE MAIN APP) ================= -->
-<div id="page-freizeit" class="page-view">
-  <header class="topbar">
-    <button class="back-btn" onclick="openPage('page-home')">⬅ Zurück</button>
-    <h1>🇩🇪 Freizeit <span>B1 / B2</span></h1>
-    <nav class="main-nav">
-      <button id="nav-study" class="nav-btn active">📖 Study Mode</button>
-      <button id="nav-practice" class="nav-btn">✏️ Practice Mode</button>
-    </nav>
-  </header>
-
-  <main>
-    <section id="study-section" class="view active">
-      <div class="sub-nav">
-        <button class="sub-btn active" data-target="reading">📝 Lesexte</button>
-        <button class="sub-btn" data-target="flashcards">🃏 Flashcards</button>
-      </div>
-
-      <div id="reading" class="sub-view active">
-        <p class="hint">✨ Die markierten Wörter sind die Nomen-Verb-Verbindungen.</p>
-        <div class="text-card">
-          <h2>☀️ Text 1: Aktive Erholung und Entdeckungen</h2>
-          <p id="text1" class="lesetext-content"></p>
-        </div>
-        <div class="text-card">
-          <h2>🎨 Text 2: Kunst, Kultur und soziales Leben</h2>
-          <p id="text2" class="lesetext-content"></p>
-        </div>
-      </div>
-
-      <div id="flashcards" class="sub-view">
-        <div class="fc-toggle">
-          <button class="fc-toggle-btn active" data-fcview="overview-view">🗂️ Überblick</button>
-          <button class="fc-toggle-btn" data-fcview="study-view">🎯 Lernmodus</button>
-          <button class="fc-toggle-btn" data-fcview="review-view">🔁 Needs Review <span id="review-badge">0</span></button>
-        </div>
-        
-        <div id="overview-view" class="fc-view active">
-          <div id="flashcard-grid" class="flashcard-grid"></div>
-        </div>
-        
-        <div id="study-view" class="fc-view">
-          <div class="study-topbar">
-            <span id="study-progress-label">Karte 1 / 40</span>
-            <button id="study-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
-          </div>
-          <div class="study-progress-track">
-            <div id="study-progress-fill" class="study-progress-fill"></div>
-          </div>
-          <div class="study-stage">
-            <button id="study-prev" class="study-arrow" type="button">◀</button>
-            <div id="study-card" class="study-card">
-              <div class="study-card-inner">
-                <div class="study-face study-front">
-                  <span class="study-badge">Tippen zum Umdrehen 👆</span>
-                  <strong id="study-front-text"></strong>
-                </div>
-                <div class="study-face study-back">
-                  <div id="study-back-german" class="study-german"></div>
-                  <div id="study-back-arabic" class="study-arabic"></div>
-                  <div id="study-back-example" class="study-example"></div>
-                  <button id="study-review-btn" class="review-btn" type="button">🔁 Needs Review</button>
-                </div>
-              </div>
-            </div>
-            <button id="study-next" class="study-arrow" type="button">▶</button>
-          </div>
-        </div>
-
-        <div id="review-view" class="fc-view">
-          <div id="review-grid" class="flashcard-grid"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Practice Mode -->
-    <section id="practice-section" class="view">
-      <div class="sub-nav">
-        <button class="sub-btn active" data-target="mcq">1️⃣ MCQ</button>
-        <button class="sub-btn" data-target="dragdrop">2️⃣ Drag & Drop</button>
-        <button class="sub-btn" data-target="fillblank">3️⃣ Lückentext</button>
-      </div>
-      <div id="mcq" class="sub-view active exercise-block"><div id="mcq-container"></div></div>
-      <div id="dragdrop" class="sub-view exercise-block"><div class="dnd-wrapper"><div id="drop-zones" class="drop-zones"></div><div id="verb-bank" class="verb-bank"></div></div></div>
-      <div id="fillblank" class="sub-view exercise-block"><div id="fillblank-container"></div></div>
-    </section>
   </main>
 </div>
 
