@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
   
   loadGlobalState(); 
   
-  // تشغيل الأقسام باستخدام الدالة الذكية (للدروس الجديدة)
+  // تشغيل الأقسام باستخدام الدالة الذكية (للدروس)
   initTopic('krach', krachData, krachTextRaw);
   initTopic('neueheimat', neueHeimatData, neueHeimatTextRaw);
   
@@ -18,11 +18,7 @@ window.addEventListener('load', () => {
   buildTekamolo();
   buildNeueHeimatMCQ();
   
-  // قسم الـ Freizeit القديم يعمل بمنطقه الخاص
-  renderFreizeitFlashcards();
-  updateFreizeitReviewUI();
-  renderFreizeitStudyCard();
-  
+  // تفعيل الـ Tooltips للنصوص
   setupTooltips();
 });
 
@@ -32,11 +28,12 @@ function openPage(pageId) {
   window.scrollTo(0, 0);
 }
 
-// دالة تنقل الـ Tabs للدروس الجديدة (Lesetext vs Flashcards vs Übungen)
+// دالة تنقل الـ Tabs للدروس (Lesetext vs Flashcards vs Übungen)
 function switchTopicTab(prefix, tabName, btnElement) {
   const parent = btnElement.parentElement;
   parent.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
   btnElement.classList.add('active');
+  
   document.getElementById(`${prefix}-lesetext`).classList.remove('active');
   document.getElementById(`${prefix}-flashcards`).classList.remove('active');
   const practiceTab = document.getElementById(`${prefix}-practice`);
@@ -80,23 +77,21 @@ document.querySelectorAll('.fc-toggle-btn').forEach(btn => {
    1. GLOBAL STATE & LOCALSTORAGE
    ============================================================ */
 let appState = {
-  freizeit: { reviewQueue: [], studyOrder: [], studyPos: 0 },
   krach: { reviewQueue: [], studyOrder: [], studyPos: 0 },
   neueheimat: { reviewQueue: [], studyOrder: [], studyPos: 0 }
 };
 
 function loadGlobalState() {
-  const saved = localStorage.getItem('engyzmo_state_v5'); 
+  const saved = localStorage.getItem('engyzmo_state_v6'); 
   if (saved) {
     const parsed = JSON.parse(saved);
-    appState.freizeit = parsed.freizeit || appState.freizeit;
     appState.krach = parsed.krach || appState.krach;
     appState.neueheimat = parsed.neueheimat || appState.neueheimat;
   }
 }
 
 function saveGlobalState() {
-  localStorage.setItem('engyzmo_state_v5', JSON.stringify(appState));
+  localStorage.setItem('engyzmo_state_v6', JSON.stringify(appState));
 }
 
 function shuffle(arr){
@@ -147,12 +142,12 @@ function initTopic(prefix, dataArray, htmlText) {
               <h3 class="arabic-text" style="font-size:1.2rem;">${item.bedeutung}</h3>
             </div>
             <div class="fc-section fc-synonyme" style="margin-bottom:5px;">
-              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || item.bedeutungDe}</p>
+              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || item.bedeutungDe || ''}</p>
             </div>
             <hr class="fc-divider" style="margin:4px 0;">
             <div class="fc-section fc-text-beispiel" style="margin:0;">
               <span class="fc-icon" style="font-size:0.9rem;">📖</span>
-              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || item.beispiel}</p>
+              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || item.beispiel || ''}</p>
             </div>
             ${!isReview 
               ? '<button class="review-btn" type="button" style="margin-top:auto; min-height:30px;">🔁 Needs Review</button>' 
@@ -221,8 +216,8 @@ function initTopic(prefix, dataArray, htmlText) {
     
     document.getElementById(`${prefix}-front-text`).textContent = item.verbindung;
     document.getElementById(`${prefix}-back-arabic`).textContent = item.bedeutung;
-    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || item.bedeutungDe;
-    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || item.beispiel;
+    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || item.bedeutungDe || "";
+    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || item.beispiel || "";
     document.getElementById(`${prefix}-back-neuesbeispiel`).textContent = item.beispielNeu || "";
     
     document.getElementById(`${prefix}-progress-label`).textContent = `Karte ${pos + 1} / ${order.length}`;
@@ -278,7 +273,7 @@ function initTopic(prefix, dataArray, htmlText) {
 }
 
 /* ============================================================
-   3. DATA & CONFIG: NEUE HEIMAT
+   3. DATA: NEUE HEIMAT
    ============================================================ */
 const neueHeimatData = [
   { verbindung: "ein Visum beantragen", bedeutung: "التقدم بطلب للحصول على تأشيرة", synonyme: "ein offizielles Dokument für die Einreise anfordern", beispielText: "„Ich musste mich um ein Visum kümmern...“", beispielNeu: "Bevor ich nach Australien reise, muss ich online ein Visum beantragen." },
@@ -298,7 +293,7 @@ const neueHeimatData = [
   { verbindung: "zufrieden sein", bedeutung: "يكون راضياً عن", synonyme: "keine weiteren Wünsche haben, glücklich sein", beispielText: "„In meinem Job war ich eigentlich zufrieden...“", beispielNeu: "Ich bin mit meinen Prüfungsergebnissen zufrieden." },
   { verbindung: "es fällt schwer / leicht", bedeutung: "يصعب / يسهل", synonyme: "Probleme (oder keine) damit haben, etwas zu tun", beispielText: "„...und es fiel mir nicht leicht zu kündigen.“", beispielNeu: "Es fällt ihm schwer, Deutsch zu lernen." },
   { verbindung: "sich freuen (auf + Akk.)", bedeutung: "يتطلع إلى / يسعد بـ", synonyme: "Freude empfinden auf ein zukünftiges Ereignis", beispielText: "„...habe ich mich aber auf mein neues Leben gefreut.“", beispielNeu: "Ich freue mich riesig auf meinen nächsten Urlaub." },
-  { verbindung: "eine Arbeitserlaubnis bekommen", bedeutung: "الحصول على تصريح عمل", synonyme: "Genehmigung erhalten, arbeiten zu dürfen", beispielText: "„...und eine Arbeitserlaubnis zu bekommen, war schwieriger...“", beispielNeu: "Ohne eine Arbeitserlaubnis darfst du nicht arbeiten." },
+  { verbindung: "eine Arbeitserlaubnis bekommen", bedeutung: "الحصول على تصريح عمل", synonyme: "Genehmigung erhalten, arbeiten zu dürfen", beispielText: "„...und eine Arbeitserlaubnis zu bekommen, war schwieriger...“", beispielNeu: "Ich muss noch eine Arbeitserlaubnis bekommen, bevor ich starte." },
   { verbindung: "Heimweh haben", bedeutung: "الشعور بالحنين إلى الوطن", synonyme: "Traurigkeit, weit weg von der Heimat zu sein", beispielText: "„Ich hatte ziemlich großes Heimweh.“", beispielNeu: "In den ersten Monaten in den USA hatte ich oft Heimweh." },
   { verbindung: "Zeugnisse übersetzen lassen", bedeutung: "ترجمة الشهادات", synonyme: "Übersetzer beauftragen, Dokumente zu übertragen", beispielText: "„...meine Zeugnisse übersetzen lassen...“", beispielNeu: "Um studieren zu können, muss ich Zeugnisse übersetzen lassen." },
   { verbindung: "sich streiten (mit + Dat.)", bedeutung: "يتجادل / يتشاجر", synonyme: "einen Konflikt austragen", beispielText: "„Wir haben uns einfach zu oft gestritten.“", beispielNeu: "Meine Nachbarn streiten sich fast jeden Tag." },
@@ -324,145 +319,7 @@ const neueHeimatTextRaw = `
 `;
 
 /* ============================================================
-   3.5 PRACTICE DATA & LOGIC: NEUE HEIMAT
-   ============================================================ */
-// 20 TEKAMOLO sentences (B1/B2 level) based on the vocab
-const tekamoloData = [
-  { parts: ["Er hat", "seine Wohnung aufgelöst.", "in Berlin", "schnell", "gestern", "wegen des Umzugs"], correct: ["Er hat", "gestern", "wegen des Umzugs", "schnell", "in Berlin", "seine Wohnung aufgelöst."] },
-  { parts: ["Sie will", "mutig", "nächstes Jahr", "aus beruflichen Gründen", "auswandern.", "nach Kanada"], correct: ["Sie will", "nächstes Jahr", "aus beruflichen Gründen", "mutig", "nach Kanada", "auswandern."] },
-  { parts: ["Wir haben uns", "heute Morgen", "gestritten.", "lautstark", "im Flur", "wegen des Lärms"], correct: ["Wir haben uns", "heute Morgen", "wegen des Lärms", "lautstark", "im Flur", "gestritten."] },
-  { parts: ["Ich muss", "unbedingt", "für die Arbeit", "ein Konto eröffnen.", "bei der Bank", "nächste Woche"], correct: ["Ich muss", "nächste Woche", "für die Arbeit", "unbedingt", "bei der Bank", "ein Konto eröffnen."] },
-  { parts: ["Er hat", "vor einem Monat", "seinen Job gekündigt.", "sofort", "in der Firma", "wegen des Stresses"], correct: ["Er hat", "vor einem Monat", "wegen des Stresses", "sofort", "in der Firma", "seinen Job gekündigt."] },
-  { parts: ["Sie hat", "am Wochenende", "spontan", "aus Zufall", "einen Mann kennengelernt.", "im Park"], correct: ["Sie hat", "am Wochenende", "aus Zufall", "spontan", "im Park", "einen Mann kennengelernt."] },
-  { parts: ["Wir müssen", "im Konsulat", "heute", "dringend", "für das Studium", "ein Visum beantragen."], correct: ["Wir müssen", "heute", "für das Studium", "dringend", "im Konsulat", "ein Visum beantragen."] },
-  { parts: ["Er hat", "letztes Jahr", "komplett neu angefangen.", "in Australien", "völlig spontan", "aus Liebe"], correct: ["Er hat", "letztes Jahr", "aus Liebe", "völlig spontan", "in Australien", "komplett neu angefangen."] },
-  { parts: ["Sie hat", "aus Einsamkeit", "gestern Abend", "Heimweh gehabt.", "sehr stark", "im Hotelzimmer"], correct: ["Sie hat", "gestern Abend", "aus Einsamkeit", "sehr stark", "im Hotelzimmer", "Heimweh gehabt."] },
-  { parts: ["Ich muss", "morgen", "beim Amt", "offiziell", "für die Uni", "Zeugnisse übersetzen lassen."], correct: ["Ich muss", "morgen", "für die Uni", "offiziell", "beim Amt", "Zeugnisse übersetzen lassen."] },
-  { parts: ["Er hat sich", "im Urlaub", "am Strand", "in sie verliebt.", "schnell", "aus heiterem Himmel"], correct: ["Er hat sich", "im Urlaub", "aus heiterem Himmel", "schnell", "am Strand", "in sie verliebt."] },
-  { parts: ["Sie hat sich", "wegen der Dokumente", "vorhin", "intensiv", "um alles gekümmert.", "am Schreibtisch"], correct: ["Sie hat sich", "vorhin", "wegen der Dokumente", "intensiv", "am Schreibtisch", "um alles gekümmert."] },
-  { parts: ["Wir haben", "aus Interesse", "in der Pause", "letztes Wochenende", "sehr leicht", "Kontakte geknüpft."], correct: ["Wir haben", "letztes Wochenende", "aus Interesse", "sehr leicht", "in der Pause", "Kontakte geknüpft."] },
-  { parts: ["Ich habe", "heute", "die Arbeitserlaubnis bekommen.", "wegen der Zusage", "im Amt", "glücklich"], correct: ["Ich habe", "heute", "wegen der Zusage", "glücklich", "im Amt", "die Arbeitserlaubnis bekommen."] },
-  { parts: ["Er hat", "komplett", "sein Leben geändert.", "wegen der Krankheit", "im letzten Monat", "in der Heimat"], correct: ["Er hat", "im letzten Monat", "wegen der Krankheit", "komplett", "in der Heimat", "sein Leben geändert."] },
-  { parts: ["Sie hat", "etwas Neues gewagt.", "aus Neugier", "mutig", "gestern", "im Büro"], correct: ["Sie hat", "gestern", "aus Neugier", "mutig", "im Büro", "etwas Neues gewagt."] },
-  { parts: ["Ich bin", "sehr glücklich", "in der Uni", "wegen der Noten", "zufrieden gewesen.", "heute"], correct: ["Ich bin", "heute", "wegen der Noten", "sehr glücklich", "in der Uni", "zufrieden gewesen."] },
-  { parts: ["Es fällt mir", "wegen der Sprache", "in Deutschland", "ziemlich schwer", "momentan", "zu studieren."], correct: ["Es fällt mir", "momentan", "wegen der Sprache", "ziemlich schwer", "in Deutschland", "zu studieren."] },
-  { parts: ["Wir haben uns", "aus Wut", "ziemlich heftig", "gestern", "gestritten.", "im Wohnzimmer"], correct: ["Wir haben uns", "gestern", "aus Wut", "ziemlich heftig", "im Wohnzimmer", "gestritten."] },
-  { parts: ["Sie hat", "heute", "ihre Entscheidung bereut.", "leise", "aus Überzeugung", "im Zimmer"], correct: ["Sie hat", "heute", "aus Überzeugung", "leise", "im Zimmer", "ihre Entscheidung bereut."] }
-];
-
-function buildTekamolo() {
-  const container = document.getElementById('tekamolo-container');
-  if(!container) return;
-  container.innerHTML = '';
-  
-  tekamoloData.forEach((item, index) => {
-    const row = document.createElement('div');
-    row.className = 'tekamolo-item';
-    row.innerHTML = `<p style="font-weight:700; margin-top:0;">Satz ${index + 1}:</p>`;
-    
-    const chipWrapper = document.createElement('div');
-    chipWrapper.className = 'tekamolo-chips';
-    
-    let selectedChip = null;
-    
-    item.parts.forEach((part, i) => {
-      const chip = document.createElement('div');
-      chip.className = 't-chip';
-      chip.textContent = part;
-      chip.dataset.pos = i;
-      
-      chip.addEventListener('click', () => {
-        if(!selectedChip) {
-          selectedChip = chip;
-          chip.classList.add('selected');
-        } else if (selectedChip === chip) {
-          selectedChip.classList.remove('selected');
-          selectedChip = null;
-        } else {
-          // Swap text and data
-          const tempText = selectedChip.textContent;
-          selectedChip.textContent = chip.textContent;
-          chip.textContent = tempText;
-          
-          selectedChip.classList.remove('selected');
-          selectedChip = null;
-        }
-      });
-      chipWrapper.appendChild(chip);
-    });
-    
-    const checkBtn = document.createElement('button');
-    checkBtn.className = 'primary-btn';
-    checkBtn.textContent = 'Prüfen';
-    
-    const resultDiv = document.createElement('div');
-    resultDiv.className = 'tekamolo-result';
-    
-    checkBtn.addEventListener('click', () => {
-      const currentOrder = Array.from(chipWrapper.children).map(c => c.textContent);
-      if(JSON.stringify(currentOrder) === JSON.stringify(item.correct)) {
-        resultDiv.textContent = 'Richtig! 🎉 ' + item.correct.join(' ');
-        resultDiv.className = 'tekamolo-result correct';
-      } else {
-        resultDiv.innerHTML = `Falsch! ❌<br>Korrekt ist:<br><b>${item.correct.join(' ')}</b>`;
-        resultDiv.className = 'tekamolo-result wrong';
-      }
-    });
-    
-    row.appendChild(chipWrapper);
-    row.appendChild(checkBtn);
-    row.appendChild(resultDiv);
-    container.appendChild(row);
-  });
-}
-
-function buildNeueHeimatMCQ() {
-  const container = document.getElementById('nh-mcq-container');
-  if(!container) return;
-  container.innerHTML = '';
-  
-  const questions = shuffle(neueHeimatData).filter(q => q.beispielNeu);
-  questions.forEach((q, qIndex) => {
-    const wrongPool = neueHeimatData.filter(v => v.verbindung !== q.verbindung);
-    const options = shuffle([q, ...shuffle(wrongPool).slice(0, 2)]);
-    
-    const item = document.createElement('div');
-    item.className = 'mcq-item';
-    
-    // Highlight the verbindung in the sentence if possible, otherwise just show meaning of verbindung
-    item.innerHTML = `
-      <div class="mcq-question" style="direction:ltr; text-align:left;">
-        ${qIndex + 1}. Was bedeutet der Ausdruck <b>"${q.verbindung}"</b> in folgendem Satz?<br>
-        <span style="font-weight:500; font-style:italic; color:var(--primary-dark);">"${q.beispielNeu}"</span>
-      </div>
-      <div class="mcq-options"></div>
-    `;
-    
-    const optionsWrap = item.querySelector('.mcq-options');
-    options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'mcq-option'; 
-      btn.textContent = opt.bedeutung;
-      btn.style.textAlign = 'right';
-      btn.style.direction = 'rtl';
-      
-      btn.addEventListener('click', () => {
-        const allBtns = optionsWrap.querySelectorAll('.mcq-option');
-        allBtns.forEach(b => b.classList.add('disabled'));
-        if(opt.verbindung === q.verbindung){ btn.classList.add('correct'); } 
-        else {
-          btn.classList.add('wrong');
-          allBtns.forEach(b => { if(b.textContent === q.bedeutung) b.classList.add('correct'); });
-        }
-      });
-      optionsWrap.appendChild(btn);
-    });
-    container.appendChild(item);
-  });
-}
-
-/* ============================================================
-   4. DATA & CONFIG: KRACH IN DER W.G
+   4. DATA: KRACH IN DER W.G
    ============================================================ */
 const krachData = [
   { verbindung: "die WG (Wohngemeinschaft)", bedeutung: "سكن مشترك", synonyme: "die Wohngemeinschaft", beispielText: "„Anne und Elias wohnen seit Kurzem zusammen in einer WG.“", beispielNeu: "Während des Studiums ist es günstiger, in einer WG zu leben." },
@@ -533,153 +390,254 @@ const krachTextRaw = `
 </div>
 `;
 
-
 /* ============================================================
-   5. TOOLTIP LOGIC (يعتمد على الكلاس الخاص بالنص)
+   5. TOOLTIP LOGIC (Robust for Mobile)
    ============================================================ */
 function setupTooltips() {
   const tooltip = document.getElementById('custom-tooltip');
+  
   document.addEventListener('click', (e) => {
     const word = e.target.closest('.vocab-word');
-    document.querySelectorAll('.vocab-word.active-link').forEach(el => el.classList.remove('active-link'));
+    const isTooltipClick = e.target.closest('#custom-tooltip');
+    
+    // إزالة التحديد عن أي كلمة سابقة
+    document.querySelectorAll('.vocab-word.active-link').forEach(el => {
+      if(el !== word) el.classList.remove('active-link');
+    });
+
     if (word) {
+      // إضاءة الكلمة (ومقاطعها إذا كانت فعل منفصل)
       const groupId = word.dataset.group;
-      if (groupId) { document.querySelectorAll(`.vocab-word[data-group="${groupId}"]`).forEach(el => el.classList.add('active-link')); } 
-      else { word.classList.add('active-link'); }
+      if (groupId) { 
+        document.querySelectorAll(`.vocab-word[data-group="${groupId}"]`).forEach(el => el.classList.add('active-link')); 
+      } else { 
+        word.classList.add('active-link'); 
+      }
+      
       tooltip.innerHTML = word.dataset.meaning.replace(/\n/g, '<br>');
       tooltip.classList.remove('hidden');
+      
       const rect = word.getBoundingClientRect();
       tooltip.style.left = `${rect.left + rect.width / 2}px`;
       tooltip.style.top = `${rect.top + window.scrollY - 10}px`;
-    } else {
+    } else if (!isTooltipClick) {
       tooltip.classList.add('hidden');
     }
   });
-  window.addEventListener('scroll', () => tooltip.classList.add('hidden'));
+
+  window.addEventListener('scroll', () => { tooltip.classList.add('hidden'); });
 }
 
 /* ============================================================
-   6. FREIZEIT (OLD LOGIC MAINTAINED)
+   6. PRACTICE: TEKAMOLO (MOBILE DRAG & DROP)
    ============================================================ */
-function renderFreizeitFlashcards(){
-  const grid = document.getElementById('flashcard-grid'); if(!grid) return;
-  grid.innerHTML = '';
-  vocabData.forEach((item, index) => {
-    const card = document.createElement('div'); card.className = 'flip-card';
-    card.innerHTML = `<div class="flip-card-inner"><div class="flip-front"><strong>${item.verbindung}</strong></div><div class="flip-back"><div class="arabic">${item.bedeutung}</div><div class="example">${item.beispiel}</div><button class="review-btn" type="button">🔁 Needs Review</button></div></div>`;
-    card.addEventListener('click', (e) => { if(e.target.closest('button')) return; card.classList.toggle('flipped'); });
-    card.querySelector('button').addEventListener('click', e => {
-      e.stopPropagation();
-      if(!appState.freizeit.reviewQueue.includes(item.verbindung)) {
-        appState.freizeit.reviewQueue.push(item.verbindung);
-        const vIndex = vocabData.findIndex(d => d.verbindung === item.verbindung);
-        const sIndex = appState.freizeit.studyOrder.indexOf(vIndex);
-        if(sIndex > -1) { appState.freizeit.studyOrder.splice(sIndex, 1); if(appState.freizeit.studyPos >= appState.freizeit.studyOrder.length) appState.freizeit.studyPos = 0; }
-        updateFreizeitReviewUI(); saveGlobalState(); showToast('Hinzugefügt ✅');
+const tekamoloData = [
+  { parts: ["Er hat", "seine Wohnung aufgelöst.", "in Berlin", "schnell", "gestern", "wegen des Umzugs"], correct: ["Er hat", "gestern", "wegen des Umzugs", "schnell", "in Berlin", "seine Wohnung aufgelöst."] },
+  { parts: ["Sie will", "mutig", "nächstes Jahr", "aus beruflichen Gründen", "auswandern.", "nach Kanada"], correct: ["Sie will", "nächstes Jahr", "aus beruflichen Gründen", "mutig", "nach Kanada", "auswandern."] },
+  { parts: ["Wir haben uns", "heute Morgen", "gestritten.", "lautstark", "im Flur", "wegen des Lärms"], correct: ["Wir haben uns", "heute Morgen", "wegen des Lärms", "lautstark", "im Flur", "gestritten."] },
+  { parts: ["Ich muss", "unbedingt", "für die Arbeit", "ein Konto eröffnen.", "bei der Bank", "nächste Woche"], correct: ["Ich muss", "nächste Woche", "für die Arbeit", "unbedingt", "bei der Bank", "ein Konto eröffnen."] },
+  { parts: ["Er hat", "vor einem Monat", "seinen Job gekündigt.", "sofort", "in der Firma", "wegen des Stresses"], correct: ["Er hat", "vor einem Monat", "wegen des Stresses", "sofort", "in der Firma", "seinen Job gekündigt."] },
+  { parts: ["Sie hat", "am Wochenende", "spontan", "aus Zufall", "einen Mann kennengelernt.", "im Park"], correct: ["Sie hat", "am Wochenende", "aus Zufall", "spontan", "im Park", "einen Mann kennengelernt."] },
+  { parts: ["Wir müssen", "im Konsulat", "heute", "dringend", "für das Studium", "ein Visum beantragen."], correct: ["Wir müssen", "heute", "für das Studium", "dringend", "im Konsulat", "ein Visum beantragen."] },
+  { parts: ["Er hat", "letztes Jahr", "komplett neu angefangen.", "in Australien", "völlig spontan", "aus Liebe"], correct: ["Er hat", "letztes Jahr", "aus Liebe", "völlig spontan", "in Australien", "komplett neu angefangen."] },
+  { parts: ["Sie hat", "aus Einsamkeit", "gestern Abend", "Heimweh gehabt.", "sehr stark", "im Hotelzimmer"], correct: ["Sie hat", "gestern Abend", "aus Einsamkeit", "sehr stark", "im Hotelzimmer", "Heimweh gehabt."] },
+  { parts: ["Ich muss", "morgen", "beim Amt", "offiziell", "für die Uni", "Zeugnisse übersetzen lassen."], correct: ["Ich muss", "morgen", "für die Uni", "offiziell", "beim Amt", "Zeugnisse übersetzen lassen."] },
+  { parts: ["Er hat sich", "im Urlaub", "am Strand", "in sie verliebt.", "schnell", "aus heiterem Himmel"], correct: ["Er hat sich", "im Urlaub", "aus heiterem Himmel", "schnell", "am Strand", "in sie verliebt."] },
+  { parts: ["Sie hat sich", "wegen der Dokumente", "vorhin", "intensiv", "um alles gekümmert.", "am Schreibtisch"], correct: ["Sie hat sich", "vorhin", "wegen der Dokumente", "intensiv", "am Schreibtisch", "um alles gekümmert."] },
+  { parts: ["Wir haben", "aus Interesse", "in der Pause", "letztes Wochenende", "sehr leicht", "Kontakte geknüpft."], correct: ["Wir haben", "letztes Wochenende", "aus Interesse", "sehr leicht", "in der Pause", "Kontakte geknüpft."] },
+  { parts: ["Ich habe", "heute", "die Arbeitserlaubnis bekommen.", "wegen der Zusage", "im Amt", "glücklich"], correct: ["Ich habe", "heute", "wegen der Zusage", "glücklich", "im Amt", "die Arbeitserlaubnis bekommen."] },
+  { parts: ["Er hat", "komplett", "sein Leben geändert.", "wegen der Krankheit", "im letzten Monat", "in der Heimat"], correct: ["Er hat", "im letzten Monat", "wegen der Krankheit", "komplett", "in der Heimat", "sein Leben geändert."] },
+  { parts: ["Sie hat", "etwas Neues gewagt.", "aus Neugier", "mutig", "gestern", "im Büro"], correct: ["Sie hat", "gestern", "aus Neugier", "mutig", "im Büro", "etwas Neues gewagt."] },
+  { parts: ["Ich bin", "sehr glücklich", "in der Uni", "wegen der Noten", "zufrieden gewesen.", "heute"], correct: ["Ich bin", "heute", "wegen der Noten", "sehr glücklich", "in der Uni", "zufrieden gewesen."] },
+  { parts: ["Es fällt mir", "wegen der Sprache", "in Deutschland", "ziemlich schwer", "momentan", "zu studieren."], correct: ["Es fällt mir", "momentan", "wegen der Sprache", "ziemlich schwer", "in Deutschland", "zu studieren."] },
+  { parts: ["Wir haben uns", "aus Wut", "ziemlich heftig", "gestern", "gestritten.", "im Wohnzimmer"], correct: ["Wir haben uns", "gestern", "aus Wut", "ziemlich heftig", "im Wohnzimmer", "gestritten."] },
+  { parts: ["Sie hat", "heute", "ihre Entscheidung bereut.", "leise", "aus Überzeugung", "im Zimmer"], correct: ["Sie hat", "heute", "aus Überzeugung", "leise", "im Zimmer", "ihre Entscheidung bereut."] }
+];
+
+function buildTekamolo() {
+  const container = document.getElementById('tekamolo-container');
+  if(!container) return;
+  container.innerHTML = '';
+  
+  tekamoloData.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'tekamolo-item';
+    row.innerHTML = `<p style="font-weight:700; margin-top:0; color:var(--primary-dark);">Satz ${index + 1}:</p>`;
+    
+    const chipWrapper = document.createElement('div');
+    chipWrapper.className = 'tekamolo-chips';
+    
+    item.parts.forEach((part, i) => {
+      const chip = document.createElement('div');
+      chip.className = 't-chip';
+      chip.textContent = part;
+      chipWrapper.appendChild(chip);
+    });
+    
+    // تفعيل السحب والإفلات للموبايل والديسكتوب
+    enableMobileSortable(chipWrapper);
+    
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'primary-btn';
+    checkBtn.textContent = 'Prüfen';
+    
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'tekamolo-result';
+    
+    checkBtn.addEventListener('click', () => {
+      const currentOrder = Array.from(chipWrapper.children).filter(c => !c.classList.contains('t-chip-ghost')).map(c => c.textContent);
+      if(JSON.stringify(currentOrder) === JSON.stringify(item.correct)) {
+        resultDiv.textContent = 'Richtig! 🎉 ' + item.correct.join(' ');
+        resultDiv.className = 'tekamolo-result correct';
+      } else {
+        resultDiv.innerHTML = `Falsch! ❌<br>Korrekt ist:<br><b>${item.correct.join(' ')}</b>`;
+        resultDiv.className = 'tekamolo-result wrong';
       }
     });
-    grid.appendChild(card);
+    
+    row.appendChild(chipWrapper);
+    row.appendChild(checkBtn);
+    row.appendChild(resultDiv);
+    container.appendChild(row);
   });
 }
 
-function updateFreizeitReviewUI() {
-  const badge = document.getElementById('review-badge'); const grid = document.getElementById('review-grid');
-  if(!badge || !grid) return;
-  const q = appState.freizeit.reviewQueue.map(v => vocabData.find(d => d.verbindung === v)).filter(Boolean);
-  badge.textContent = q.length;
-  if(q.length === 0) { grid.innerHTML = '<p class="hint">Keine Karten.</p>'; return; }
-  grid.innerHTML = '';
-  q.forEach(item => {
-    const card = document.createElement('div'); card.className = 'flip-card';
-    card.innerHTML = `<div class="flip-card-inner"><div class="flip-front"><strong>${item.verbindung}</strong></div><div class="flip-back"><div class="arabic">${item.bedeutung}</div><div class="example">${item.beispiel}</div><button class="learned-btn" type="button">✅ Gelernt</button></div></div>`;
-    card.addEventListener('click', (e) => { if(e.target.closest('button')) return; card.classList.toggle('flipped'); });
-    card.querySelector('button').addEventListener('click', e => {
-      e.stopPropagation(); appState.freizeit.reviewQueue = appState.freizeit.reviewQueue.filter(v => v !== item.verbindung);
-      updateFreizeitReviewUI(); saveGlobalState(); showToast('Entfernt 🎉');
-    });
-    grid.appendChild(card);
-  });
-}
+// أداة السحب والإفلات المخصصة للموبايل
+function enableMobileSortable(container) {
+  let draggingItem = null;
+  let ghost = null;
+  let startX = 0, startY = 0;
+  let initX = 0, initY = 0;
 
-function renderFreizeitStudyCard() {
-  const c = document.getElementById('study-card'); if(!c) return;
-  const order = appState.freizeit.studyOrder; let pos = appState.freizeit.studyPos;
-  if(order.length === 0) { document.getElementById('study-front-text').textContent = 'Fertig 🎉'; return; }
-  if(pos >= order.length) { pos = 0; appState.freizeit.studyPos = 0; }
-  const item = vocabData[order[pos]];
-  c.classList.remove('flipped');
-  document.getElementById('study-front-text').textContent = item.verbindung;
-  document.getElementById('study-back-arabic').textContent = item.bedeutung;
-  document.getElementById('study-back-german').textContent = item.bedeutungDe || "";
-  document.getElementById('study-back-example').textContent = item.beispiel;
-  document.getElementById('study-progress-label').textContent = `Karte ${pos+1} / ${order.length}`;
-  document.getElementById('study-progress-fill').style.width = `${((pos+1)/order.length)*100}%`;
-}
+  container.addEventListener('touchstart', handleStart, {passive: false});
+  container.addEventListener('mousedown', handleStart);
 
-if(document.getElementById('study-card')) {
-  document.getElementById('study-next').addEventListener('click', () => { appState.freizeit.studyPos++; renderFreizeitStudyCard(); });
-  document.getElementById('study-prev').addEventListener('click', () => { appState.freizeit.studyPos--; renderFreizeitStudyCard(); });
-  document.getElementById('study-shuffle').addEventListener('click', () => { appState.freizeit.studyOrder = shuffle(appState.freizeit.studyOrder); appState.freizeit.studyPos = 0; renderFreizeitStudyCard(); });
-  document.getElementById('study-review-btn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    if(appState.freizeit.studyOrder.length > 0) {
-      appState.freizeit.reviewQueue.push(vocabData[appState.freizeit.studyOrder[appState.freizeit.studyPos]].verbindung);
-      updateFreizeitReviewUI(); document.getElementById('study-next').click();
+  function handleStart(e) {
+    if(e.target.tagName !== 'DIV' || !e.target.classList.contains('t-chip')) return;
+    draggingItem = e.target;
+    
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX; startY = touch.clientY;
+    
+    const rect = draggingItem.getBoundingClientRect();
+    initX = rect.left; initY = rect.top;
+
+    ghost = draggingItem.cloneNode(true);
+    ghost.classList.add('t-chip-ghost');
+    ghost.style.left = initX + 'px';
+    ghost.style.top = initY + 'px';
+    ghost.style.width = rect.width + 'px';
+    
+    document.body.appendChild(ghost);
+    draggingItem.classList.add('dragging');
+
+    document.addEventListener('touchmove', handleMove, {passive: false});
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+  }
+
+  function handleMove(e) {
+    if(!draggingItem) return;
+    e.preventDefault(); 
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+
+    ghost.style.left = (initX + dx) + 'px';
+    ghost.style.top = (initY + dy) + 'px';
+
+    ghost.style.display = 'none';
+    const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    ghost.style.display = 'block';
+
+    if(!elemBelow) return;
+    const targetItem = elemBelow.closest('.t-chip');
+    if(targetItem && targetItem !== draggingItem && targetItem.parentElement === container && !targetItem.classList.contains('t-chip-ghost')) {
+      const rect = targetItem.getBoundingClientRect();
+      const next = (touch.clientX - rect.left) / rect.width > 0.5;
+      container.insertBefore(draggingItem, next ? targetItem.nextSibling : targetItem);
     }
-  });
+  }
+
+  function handleEnd() {
+    if(!draggingItem) return;
+    draggingItem.classList.remove('dragging');
+    if(ghost) ghost.remove();
+    draggingItem = null; ghost = null;
+    
+    document.removeEventListener('touchmove', handleMove);
+    document.removeEventListener('touchend', handleEnd);
+    document.removeEventListener('mousemove', handleMove);
+    document.removeEventListener('mouseup', handleEnd);
+  }
 }
 
-if(document.getElementById('text1')) document.getElementById('text1').innerHTML = `Die Art und Weise, wie die <span class="vocab-word" data-meaning="ينظم وقت الفراغ">Freizeit gestaltet</span> wird...`;
-if(document.getElementById('text2')) document.getElementById('text2').innerHTML = `In meinem Leben steht nicht nur die Geschichte <span class="vocab-word" data-meaning="في بؤرة الاهتمام">im Mittelpunkt</span>...`;
+/* ============================================================
+   7. PRACTICE: MCQ (NEUE HEIMAT)
+   ============================================================ */
+function buildNeueHeimatMCQ() {
+  const container = document.getElementById('nh-mcq-container');
+  if(!container) return;
+  container.innerHTML = '';
+  
+  // Custom MCQ Data based on Neue Heimat
+  const customMCQs = [
+    { s: "Bevor ich nach Australien reise, muss ich online <b>ein Visum beantragen</b>.", correct: "التقدم بطلب للحصول على تأشيرة", w1: "تجديد جواز السفر", w2: "شراء تذكرة طيران" },
+    { s: "Weil er ins Ausland geht, muss er nächste Woche <b>seine Wohnung auflösen</b>.", correct: "تصفية أو إخلاء الشقة", w1: "تنظيف الشقة", w2: "تأجير الشقة" },
+    { s: "Auf der internationalen Konferenz konnte ich viele nützliche <b>Kontakte knüpfen</b>.", correct: "تكوين علاقات / التعرف على أشخاص جدد", w1: "إنهاء العلاقات", w2: "تجنب التحدث مع الناس" },
+    { s: "Am Flughafen fiel es mir sehr schwer, <b>mich</b> von meiner Familie <b>zu verabschieden</b>.", correct: "توديع (شخص ما)", w1: "استقبال (شخص ما)", w2: "الانتظار مع" },
+    { s: "Er hat <b>seinen Job gekündigt</b>, um sich selbstständig zu machen.", correct: "الاستقالة من العمل", w1: "البحث عن عمل", w2: "الترقية في العمل" },
+    { s: "Um mein erstes Gehalt zu bekommen, muss ich sofort <b>ein Konto eröffnen</b>.", correct: "فتح حساب بنكي", w1: "سحب أموال", w2: "إغلاق الحساب" },
+    { s: "Es erfordert viel Mut, <b>sein gewohntes Leben aufzugeben</b> und wegzuziehen.", correct: "التخلي عن الحياة المعتادة", w1: "الحفاظ على الروتين", w2: "الاستمتاع بالحياة" },
+    { s: "Nach der Trennung hat sie in einer anderen Stadt <b>komplett neu angefangen</b>.", correct: "البدء من جديد تماماً", w1: "العودة للماضي", w2: "التفكير في المستقبل" },
+    { s: "Wer beruflich erfolgreich sein will, muss manchmal auch <b>etwas wagen</b>.", correct: "يجرؤ على شيء / يخاطر", w1: "يتجنب المخاطر", w2: "يعمل بهدوء" },
+    { s: "Viele junge Menschen <b>wandern</b> nach Kanada <b>aus</b>, um dort zu arbeiten.", correct: "يهاجر", w1: "يسافر للسياحة", w2: "يعود إلى وطنه" },
+    { s: "Ich habe meinen heutigen Chef ganz <b>zufällig kennengelernt</b>.", correct: "التعرف على شخص بالصدفة", w1: "التعرف بشكل رسمي", w2: "تجاهل شخص ما" },
+    { s: "Sie hat <b>sich</b> während ihres Sommerurlaubs in ihren Reiseleiter <b>verliebt</b>.", correct: "يقع في حب (شخص ما)", w1: "يتشاجر مع", w2: "ينسى" },
+    { s: "Nach seiner schweren Krankheit hat er beschlossen, <b>sein Leben komplett zu ändern</b>.", correct: "تغيير حياته بالكامل", w1: "الحفاظ على صحته", w2: "العمل بجد" },
+    { s: "Du musst <b>dich</b> rechtzeitig <b>um</b> deine Flugtickets <b>kümmern</b>.", correct: "يعتني بـ / ينجز أمراً", w1: "ينسى", w2: "يتجاهل" },
+    { s: "Ich bin mit meinen Prüfungsergebnissen in diesem Semester sehr <b>zufrieden</b>.", correct: "يكون راضياً عن", w1: "غاضب من", w2: "حزين بسبب" },
+    { s: "Es <b>fällt</b> ihm <b>schwer</b>, Deutsch zu lernen, weil die Grammatik kompliziert ist.", correct: "يصعب على شخص ما", w1: "يسهل على شخص ما", w2: "لا يهتم بـ" },
+    { s: "Ich <b>freue mich</b> schon riesig <b>auf</b> meinen nächsten Urlaub in Spanien.", correct: "يتطلع إلى / يسعد بـ", w1: "يخاف من", w2: "ينسى" },
+    { s: "Ich muss noch <b>eine Arbeitserlaubnis bekommen</b>, bevor ich starte.", correct: "الحصول على تصريح عمل", w1: "الحصول على إجازة", w2: "دفع الضرائب" },
+    { s: "In den ersten Monaten in den USA hatte ich abends oft schreckliches <b>Heimweh</b>.", correct: "الشعور بالحنين إلى الوطن", w1: "الشعور بالسعادة", w2: "الرغبة في السفر" },
+    { s: "Um an der Uni studieren zu können, muss ich meine <b>Zeugnisse übersetzen lassen</b>.", correct: "ترجمة الشهادات", w1: "تصديق الشهادات", w2: "نسخ الشهادات" }
+  ];
 
-const dragDropData = [{ noun: "einen Ausgleich", prep: "zu + Dat.", verb: "finden" },{ noun: "zur Ruhe", prep: "", verb: "kommen" }];
-function buildMCQ(){
-  const container = document.getElementById('mcq-container'); if(!container) return; container.innerHTML = '';
-  const questions = shuffle(vocabData).slice(0, 10);
-  questions.forEach((q, qIndex) => {
-    const wrongPool = vocabData.filter(v => v.verbindung !== q.verbindung);
-    const options = shuffle([q, ...shuffle(wrongPool).slice(0, 3)]);
-    const item = document.createElement('div'); item.className = 'mcq-item';
-    item.innerHTML = `<div class="mcq-question">${qIndex + 1}. ${q.bedeutung}</div><div class="mcq-options"></div>`;
+  const shuffledQuestions = shuffle(customMCQs);
+  
+  shuffledQuestions.forEach((q, qIndex) => {
+    const options = shuffle([{t: q.correct, c: true}, {t: q.w1, c: false}, {t: q.w2, c: false}]);
+    
+    const item = document.createElement('div');
+    item.className = 'mcq-item';
+    
+    item.innerHTML = `
+      <div class="mcq-question" style="direction:ltr; text-align:left;">
+        ${qIndex + 1}. Was bedeutet der markierte Ausdruck?<br>
+        <span style="font-weight:500; font-style:italic; color:var(--primary-dark); display:inline-block; margin-top:8px;">"${q.s}"</span>
+      </div>
+      <div class="mcq-options"></div>
+    `;
+    
     const optionsWrap = item.querySelector('.mcq-options');
     options.forEach(opt => {
-      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'mcq-option'; btn.textContent = opt.verbindung;
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'mcq-option'; 
+      btn.textContent = opt.t;
+      
       btn.addEventListener('click', () => {
-        optionsWrap.querySelectorAll('.mcq-option').forEach(b => b.classList.add('disabled'));
-        if(opt.verbindung === q.verbindung){ btn.classList.add('correct'); } else { btn.classList.add('wrong'); optionsWrap.querySelectorAll('.mcq-option').forEach(b => { if(b.textContent === q.verbindung) b.classList.add('correct'); }); }
+        const allBtns = optionsWrap.querySelectorAll('.mcq-option');
+        allBtns.forEach(b => b.classList.add('disabled'));
+        if(opt.c){ btn.classList.add('correct'); } 
+        else {
+          btn.classList.add('wrong');
+          allBtns.forEach(b => { if(b.textContent === q.correct) b.classList.add('correct'); });
+        }
       });
       optionsWrap.appendChild(btn);
     });
     container.appendChild(item);
   });
 }
-function buildDragDrop(){
-  const dropZonesEl = document.getElementById('drop-zones'); const verbBankEl = document.getElementById('verb-bank');
-  if(!dropZonesEl) return; dropZonesEl.innerHTML = ''; verbBankEl.innerHTML = '';
-  dragDropData.forEach((pair, index) => {
-    const row = document.createElement('div'); row.className = 'drop-row';
-    row.innerHTML = `<span class="noun">${pair.noun}</span> ${pair.prep ? `<span style="color:var(--muted); font-size:0.85rem;">(${pair.prep})</span>` : ''} <div class="drop-zone" data-answer="${pair.verb}" data-index="${index}">Verb hier ablegen</div>`;
-    dropZonesEl.appendChild(row);
-    const zone = row.querySelector('.drop-zone');
-    zone.addEventListener('click', () => { if(zone.dataset.filled === 'true'){ const chip = document.getElementById(zone.dataset.chipId); if(chip) chip.classList.remove('used'); zone.textContent = 'Verb hier ablegen'; zone.classList.remove('correct', 'wrong'); delete zone.dataset.filled; delete zone.dataset.given; delete zone.dataset.chipId; } });
-  });
-  shuffle(dragDropData).forEach((pair, i) => {
-    const chip = document.createElement('div'); chip.className = 'verb-chip'; chip.id = `verb-chip-${i}`; chip.textContent = pair.verb;
-    chip.addEventListener('pointerdown', (e) => {
-      if(chip.classList.contains('used')) return; e.preventDefault();
-      const rect = chip.getBoundingClientRect(); const ghost = chip.cloneNode(true); ghost.classList.add('drag-ghost'); ghost.style.width = rect.width + 'px'; document.body.appendChild(ghost);
-      function moveGhost(x, y){ ghost.style.left = (x - rect.width / 2) + 'px'; ghost.style.top = (y - rect.height / 2) + 'px'; } moveGhost(e.clientX, e.clientY); chip.style.opacity = '0.35';
-      function clearOverStates(){ document.querySelectorAll('.drop-zone.over').forEach(z => z.classList.remove('over')); }
-      function onMove(ev){ moveGhost(ev.clientX, ev.clientY); clearOverStates(); const el = document.elementFromPoint(ev.clientX, ev.clientY); const zone = el && el.closest && el.closest('.drop-zone'); if(zone && zone.dataset.filled !== 'true') zone.classList.add('over'); }
-      function onUp(ev){
-        const el = document.elementFromPoint(ev.clientX, ev.clientY); const zone = el && el.closest && el.closest('.drop-zone'); clearOverStates();
-        if(zone && zone.dataset.filled !== 'true'){ zone.textContent = pair.verb; zone.dataset.filled = 'true'; zone.dataset.given = pair.verb; zone.dataset.chipId = chip.id; chip.classList.add('used'); if(pair.verb.toLowerCase() === zone.dataset.answer.toLowerCase()){ zone.classList.add('correct'); zone.classList.remove('wrong'); } else { zone.classList.add('wrong'); zone.classList.remove('correct'); } }
-        chip.style.opacity = ''; ghost.remove(); document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp); document.removeEventListener('pointercancel', onUp);
-      }
-      document.addEventListener('pointermove', onMove); document.addEventListener('pointerup', onUp); document.addEventListener('pointercancel', onUp);
-    });
-    verbBankEl.appendChild(chip);
-  });
-}
-if(document.getElementById('reset-dnd')) document.getElementById('reset-dnd').addEventListener('click', buildDragDrop);
-buildMCQ(); buildDragDrop();
