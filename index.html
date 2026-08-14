@@ -71,7 +71,98 @@
     <h1>📖 Aspekte neu <span>B2</span></h1>
   </header>
   <main class="dashboard-main">
-    <p class="hint" style="text-align:center; margin-top:30px; font-size:1.1rem;">Bald verfügbar! Neue Themen werden hier hinzugefügt 🚀</p>
+    <!-- تمت إضافة القسم الجديد هنا -->
+    <div class="dash-grid">
+      <div class="dash-card" onclick="openPage('page-neue-heimat')">
+        <div class="icon">🌍</div>
+        <h3>Kapitel 1: Heimat ist...</h3>
+        <p>Neue Heimat</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= TOPIC: NEUE HEIMAT ================= -->
+<div id="page-neue-heimat" class="page-view">
+  <header class="topbar">
+    <button class="back-btn" onclick="openPage('page-aspekte')">⬅ Zurück</button>
+    <h1>🌍 Neue Heimat</h1>
+  </header>
+  <main>
+    <div class="sub-nav">
+      <button class="sub-btn active" onclick="switchTopicTab('neueheimat', 'lesetext', this)">📝 Lesetext</button>
+      <button class="sub-btn" onclick="switchTopicTab('neueheimat', 'flashcards', this)">🃏 Flashcards</button>
+    </div>
+
+    <!-- Lesetext -->
+    <div id="neueheimat-lesetext" class="sub-view active">
+      <p class="hint">✨ Tippe auf die markierten Wörter, um die Bedeutung zu sehen.</p>
+      <div class="text-card">
+        <div id="neueheimat-text-container" class="lesetext-content"></div>
+      </div>
+    </div>
+
+    <!-- Flashcards -->
+    <div id="neueheimat-flashcards" class="sub-view">
+      <div class="fc-toggle">
+        <button class="fc-toggle-btn active" data-fcview="neueheimat-overview-view">🗂️ Überblick</button>
+        <button class="fc-toggle-btn" data-fcview="neueheimat-study-view">🎯 Lernmodus</button>
+        <button class="fc-toggle-btn" data-fcview="neueheimat-review-view">🔁 Needs Review <span id="neueheimat-review-badge">0</span></button>
+      </div>
+
+      <div id="neueheimat-overview-view" class="fc-view active">
+        <div id="neueheimat-flashcard-grid" class="flashcard-grid"></div>
+      </div>
+
+      <div id="neueheimat-study-view" class="fc-view">
+        <div class="study-topbar">
+          <span id="neueheimat-progress-label">Karte 1 / 0</span>
+          <button id="neueheimat-shuffle" class="mini-btn" type="button">🔀 Mischen</button>
+        </div>
+        <div class="study-progress-track">
+          <div id="neueheimat-progress-fill" class="study-progress-fill"></div>
+        </div>
+
+        <div class="study-stage">
+          <button id="neueheimat-prev" class="study-arrow" type="button">◀</button>
+          <div id="neueheimat-card" class="study-card">
+            <div class="study-card-inner">
+              <div class="study-face study-front">
+                <span class="study-badge">Tippen zum Umdrehen 👆</span>
+                <strong id="neueheimat-front-text"></strong>
+              </div>
+              <div class="study-face study-back flashcard-back-v2">
+                <div class="fc-section fc-bedeutung">
+                  <span class="fc-label">Bedeutung:</span>
+                  <h3 id="neueheimat-back-arabic" class="arabic-text"></h3>
+                </div>
+                <hr class="fc-divider">
+                <div class="fc-section fc-synonyme">
+                  <span class="fc-label">Bedeutung (DE) / Synonyme:</span>
+                  <p id="neueheimat-back-synonyme"></p>
+                </div>
+                <div class="fc-section fc-text-beispiel">
+                  <span class="fc-icon">📖</span>
+                  <p id="neueheimat-back-textbeispiel"></p>
+                </div>
+                <div class="fc-section fc-neues-beispiel">
+                  <span class="fc-icon">💡</span>
+                  <p id="neueheimat-back-neuesbeispiel"></p>
+                </div>
+                <button id="neueheimat-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
+              </div>
+            </div>
+          </div>
+          <button id="neueheimat-next" class="study-arrow" type="button">▶</button>
+        </div>
+        <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
+      </div>
+
+      <div id="neueheimat-review-view" class="fc-view">
+        <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
+        <div id="neueheimat-review-grid" class="flashcard-grid"></div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -83,8 +174,8 @@
   </header>
   <main>
     <div class="sub-nav">
-      <button class="sub-btn active" onclick="switchKrachTab('lesetext', this)">📝 Lesetext</button>
-      <button class="sub-btn" onclick="switchKrachTab('flashcards', this)">🃏 Flashcards</button>
+      <button class="sub-btn active" onclick="switchTopicTab('krach', 'lesetext', this)">📝 Lesetext</button>
+      <button class="sub-btn" onclick="switchTopicTab('krach', 'flashcards', this)">🃏 Flashcards</button>
     </div>
 
     <!-- Lesetext -->
@@ -95,21 +186,18 @@
       </div>
     </div>
 
-    <!-- Flashcards (Now with 3 tabs) -->
+    <!-- Flashcards -->
     <div id="krach-flashcards" class="sub-view">
-      
       <div class="fc-toggle">
         <button class="fc-toggle-btn active" data-fcview="krach-overview-view">🗂️ Überblick</button>
         <button class="fc-toggle-btn" data-fcview="krach-study-view">🎯 Lernmodus</button>
         <button class="fc-toggle-btn" data-fcview="krach-review-view">🔁 Needs Review <span id="krach-review-badge">0</span></button>
       </div>
 
-      <!-- Overview Grid -->
       <div id="krach-overview-view" class="fc-view active">
         <div id="krach-flashcard-grid" class="flashcard-grid"></div>
       </div>
 
-      <!-- Study Mode -->
       <div id="krach-study-view" class="fc-view">
         <div class="study-topbar">
           <span id="krach-progress-label">Karte 1 / 0</span>
@@ -145,7 +233,6 @@
                   <span class="fc-icon">💡</span>
                   <p id="krach-back-neuesbeispiel"></p>
                 </div>
-                <!-- Review Button inside Study Mode -->
                 <button id="krach-study-review-btn" class="review-btn" type="button" style="margin-top: 10px;">🔁 Needs Review</button>
               </div>
             </div>
@@ -155,17 +242,15 @@
         <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
       </div>
 
-      <!-- Review Grid -->
       <div id="krach-review-view" class="fc-view">
         <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
         <div id="krach-review-grid" class="flashcard-grid"></div>
       </div>
-
     </div>
   </main>
 </div>
 
-<!-- ================= TOPIC: FREIZEIT (THE MAIN APP) ================= -->
+<!-- ================= TOPIC: FREIZEIT ================= -->
 <div id="page-freizeit" class="page-view">
   <header class="topbar">
     <button class="back-btn" onclick="openPage('page-home')">⬅ Zurück</button>
@@ -177,17 +262,16 @@
   </header>
 
   <main>
-    <!-- STUDY MODE -->
     <section id="study-section" class="view active">
       <div class="sub-nav">
-        <button class="sub-btn active" data-target="reading">📝 Lesetexte</button>
+        <button class="sub-btn active" data-target="reading">📝 Lesexte</button>
         <button class="sub-btn" data-target="flashcards">🃏 Flashcards</button>
       </div>
 
       <div id="reading" class="sub-view active">
-        <p class="hint">✨ Die markierten Wörter sind die Nomen-Verb-Verbindungen. (Tippe auf ein Wort)</p>
+        <p class="hint">✨ Die markierten Wörter sind die Nomen-Verb-Verbindungen.</p>
         <div class="text-card">
-          <h2>☀️ Text 1: Aktive Erholung und Entdeckungen in der Stadt</h2>
+          <h2>☀️ Text 1: Aktive Erholung und Entdeckungen</h2>
           <p id="text1" class="lesetext-content"></p>
         </div>
         <div class="text-card">
@@ -233,45 +317,29 @@
             </div>
             <button id="study-next" class="study-arrow" type="button">▶</button>
           </div>
-          <p class="study-hint">👉 Wische oder tippe die Pfeile, um zur nächsten Karte zu gehen.</p>
         </div>
 
         <div id="review-view" class="fc-view">
-          <p class="hint">Hier sind die Karten, die du wiederholen möchtest.</p>
           <div id="review-grid" class="flashcard-grid"></div>
         </div>
       </div>
     </section>
 
-    <!-- PRACTICE MODE -->
+    <!-- Practice Mode -->
     <section id="practice-section" class="view">
       <div class="sub-nav">
-        <button class="sub-btn active" data-target="mcq">1️⃣ Multiple Choice</button>
-        <button class="sub-btn" data-target="dragdrop">2️⃣ Drag &amp; Drop</button>
+        <button class="sub-btn active" data-target="mcq">1️⃣ MCQ</button>
+        <button class="sub-btn" data-target="dragdrop">2️⃣ Drag & Drop</button>
         <button class="sub-btn" data-target="fillblank">3️⃣ Lückentext</button>
       </div>
-      <div id="mcq" class="sub-view active exercise-block">
-        <h2>Übung 1: Wähle die richtige Verbindung</h2>
-        <div id="mcq-container"></div>
-      </div>
-      <div id="dragdrop" class="sub-view exercise-block">
-        <h2>Übung 2: Ziehe das passende Verb in die Lücke</h2>
-        <div class="dnd-wrapper">
-          <div id="drop-zones" class="drop-zones"></div>
-          <div id="verb-bank" class="verb-bank"></div>
-        </div>
-        <button id="reset-dnd" class="secondary-btn">Zurücksetzen</button>
-      </div>
-      <div id="fillblank" class="sub-view exercise-block">
-        <h2>Übung 3: Ergänze die Lücken im Kontext</h2>
-        <div id="fillblank-container"></div>
-      </div>
+      <div id="mcq" class="sub-view active exercise-block"><div id="mcq-container"></div></div>
+      <div id="dragdrop" class="sub-view exercise-block"><div class="dnd-wrapper"><div id="drop-zones" class="drop-zones"></div><div id="verb-bank" class="verb-bank"></div></div></div>
+      <div id="fillblank" class="sub-view exercise-block"><div id="fillblank-container"></div></div>
     </section>
   </main>
 </div>
 
 <div id="toast" class="toast"></div>
-<!-- Tooltip Element -->
 <div id="custom-tooltip" class="custom-tooltip hidden"></div>
 
 <script src="script.js"></script>
