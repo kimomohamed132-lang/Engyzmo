@@ -97,7 +97,7 @@ main { max-width:960px; margin:0 auto; padding:20px 14px 90px; }
   font-size: 1.2rem; 
   font-weight: 700; 
   pointer-events: none; 
-  z-index: 99999; /* عالي جداً لضمان الظهور فوق كل شيء */
+  z-index: 99999; 
   box-shadow: 0 6px 16px rgba(0,0,0,0.25); 
   transform: translate(-50%, -120%); 
   direction: rtl; 
@@ -118,7 +118,7 @@ main { max-width:960px; margin:0 auto; padding:20px 14px 90px; }
 .fc-toggle-btn.active{ background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; box-shadow:0 4px 12px rgba(58,110,165,0.3); }
 .fc-view{display:none;}
 .fc-view.active{display:block; animation:fadeIn .25s ease;}
-[id$="-review-badge"], #review-badge { background: var(--accent); color: #fff; border-radius: 12px; padding: 2px 8px; font-size: 0.8rem; margin-left: 5px; }
+[id$="-review-badge"] { background: var(--accent); color: #fff; border-radius: 12px; padding: 2px 8px; font-size: 0.8rem; margin-left: 5px; }
 
 .flashcard-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
 .flip-card{ perspective:1000px; height:180px; cursor:pointer; }
@@ -150,14 +150,9 @@ main { max-width:960px; margin:0 auto; padding:20px 14px 90px; }
 .study-front{ background:linear-gradient(155deg,#ffffff,#eef4fb 60%, #dfeaf9); border:3px solid #d7e6f7; }
 .study-front strong{ font-family:'Baloo 2',sans-serif; font-size:1.7rem; color:var(--primary-dark); line-height:1.35; }
 .study-badge{ font-size:0.75rem; color:var(--muted); background:#eef2f7; padding:4px 12px; border-radius:20px; font-weight:700; }
-.study-back{ background:linear-gradient(150deg,var(--primary),#6a8fc2 55%, var(--warm-accent)); color:#fff; transform:rotateY(180deg); gap:14px; }
-.study-german { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
-.study-arabic { font-size: 1.6rem; font-weight: 700; direction: rtl; color: #ffe8d1; font-family: 'Cairo', sans-serif;}
-.study-example { font-size: 1.1rem; font-style: italic; opacity: 0.95; line-height: 1.6; }
-.study-hint{ text-align:center; color:var(--muted); font-size:0.85rem; margin-top:14px; }
 
 /* V2 Flashcard Back */
-.flashcard-back-v2 { padding: 24px; justify-content: flex-start; align-items: stretch; text-align: left; gap: 8px; }
+.flashcard-back-v2 { padding: 24px; justify-content: flex-start; align-items: stretch; text-align: left; gap: 8px; background:linear-gradient(150deg,var(--primary),#6a8fc2 55%, var(--warm-accent)); color:#fff; transform:rotateY(180deg);}
 .fc-section { width: 100%; }
 .fc-label { font-size: 0.75rem; text-transform: uppercase; color: #d7e6f7; letter-spacing: 1px; display: block; margin-bottom: 2px; }
 .fc-bedeutung { text-align: right; }
@@ -224,7 +219,7 @@ main { max-width:960px; margin:0 auto; padding:20px 14px 90px; }
   .dash-grid { grid-template-columns: 1fr; }
   .text-card{padding:16px 14px; border-radius:18px;} .text-card h2{font-size:1.1rem;} .lesetext-content p{font-size:1.05rem; line-height:1.85;}
   .study-card{max-width:100%; height:min(60vh,420px); min-height:320px;}
-  .study-front strong{font-size:1.3rem;} .study-arabic{font-size:1.4rem;}
+  .study-front strong{font-size:1.3rem;}
   .fc-bedeutung .arabic-text { font-size: 1.4rem; }
   .flashcard-back-v2 { padding: 18px; }
   .primary-btn{width:100%;}
