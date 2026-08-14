@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
   
   loadGlobalState(); 
   
-  // تشغيل الأقسام (الدالة السحرية)
+  // تشغيل الأقسام باستخدام الدالة الذكية
   initTopic('krach', krachData, krachTextRaw);
   initTopic('neueheimat', neueHeimatData, neueHeimatTextRaw);
   
@@ -28,7 +28,7 @@ function openPage(pageId) {
   window.scrollTo(0, 0);
 }
 
-// تنقل الـ Tabs الرئيسية للدرس
+// دالة تنقل الـ Tabs للدروس (Lesetext vs Flashcards vs Übungen)
 function switchTopicTab(prefix, tabName, btnElement) {
   const parent = btnElement.parentElement;
   parent.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
@@ -42,7 +42,7 @@ function switchTopicTab(prefix, tabName, btnElement) {
   document.getElementById(`${prefix}-${tabName}`).classList.add('active');
 }
 
-// تنقل التدريبات (TEKAMOLO vs MCQ)
+// دالة تنقل التدريبات (TEKAMOLO vs MCQ)
 function switchPracticeTab(prefix, tabName, btnElement) {
   const parent = btnElement.parentElement;
   parent.querySelectorAll('.fc-toggle-btn').forEach(btn => btn.classList.remove('active'));
@@ -53,9 +53,9 @@ function switchPracticeTab(prefix, tabName, btnElement) {
   document.getElementById(`${prefix}-${tabName}`).classList.add('active');
 }
 
-// تنقل الـ Tabs داخل الفلاش كاردز (Überblick / Lernmodus / Review)
+// دالة تنقل الـ Tabs داخل الفلاش كاردز (Überblick / Lernmodus / Review)
 document.querySelectorAll('.fc-toggle-btn').forEach(btn => {
-  if(btn.hasAttribute('onclick')) return; // تجاهل أزرار التدريبات
+  if(btn.hasAttribute('onclick')) return; // ignore practice buttons
   btn.addEventListener('click', () => {
     const parentContainer = btn.closest('.sub-view');
     parentContainer.querySelectorAll('.fc-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -65,7 +65,7 @@ document.querySelectorAll('.fc-toggle-btn').forEach(btn => {
     const targetId = btn.dataset.fcview;
     document.getElementById(targetId).classList.add('active');
     
-    // تحديث الكارت عند الدخول لوضع المذاكرة
+    // إعادة رسم الكارت عند الدخول لوضع المذاكرة
     if (targetId.includes('-study-view')) {
       const prefix = targetId.split('-study-view')[0];
       if(window[`renderStudyCard_${prefix}`]) window[`renderStudyCard_${prefix}`]();
@@ -82,7 +82,7 @@ let appState = {
 };
 
 function loadGlobalState() {
-  const saved = localStorage.getItem('engyzmo_state_v7'); 
+  const saved = localStorage.getItem('engyzmo_state_v8'); 
   if (saved) {
     const parsed = JSON.parse(saved);
     appState.krach = parsed.krach || appState.krach;
@@ -91,7 +91,7 @@ function loadGlobalState() {
 }
 
 function saveGlobalState() {
-  localStorage.setItem('engyzmo_state_v7', JSON.stringify(appState));
+  localStorage.setItem('engyzmo_state_v8', JSON.stringify(appState));
 }
 
 function shuffle(arr){
@@ -112,7 +112,7 @@ function showToast(msg){
 }
 
 /* ============================================================
-   2. THE MAGIC FUNCTION (دالة توليد الدروس)
+   2. THE MAGIC FUNCTION (دالة توليد الدروس التلقائية)
    ============================================================ */
 function initTopic(prefix, dataArray, htmlText) {
   const textContainer = document.getElementById(`${prefix}-text-container`);
@@ -142,12 +142,12 @@ function initTopic(prefix, dataArray, htmlText) {
               <h3 class="arabic-text" style="font-size:1.2rem;">${item.bedeutung}</h3>
             </div>
             <div class="fc-section fc-synonyme" style="margin-bottom:5px;">
-              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || ''}</p>
+              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || item.bedeutungDe || ''}</p>
             </div>
             <hr class="fc-divider" style="margin:4px 0;">
             <div class="fc-section fc-text-beispiel" style="margin:0;">
               <span class="fc-icon" style="font-size:0.9rem;">📖</span>
-              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || ''}</p>
+              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || item.beispiel || ''}</p>
             </div>
             ${!isReview 
               ? '<button class="review-btn" type="button" style="margin-top:auto; min-height:30px;">🔁 Needs Review</button>' 
@@ -216,8 +216,8 @@ function initTopic(prefix, dataArray, htmlText) {
     
     document.getElementById(`${prefix}-front-text`).textContent = item.verbindung;
     document.getElementById(`${prefix}-back-arabic`).textContent = item.bedeutung;
-    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || "";
-    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || "";
+    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || item.bedeutungDe || "";
+    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || item.beispiel || "";
     document.getElementById(`${prefix}-back-neuesbeispiel`).textContent = item.beispielNeu || "";
     
     document.getElementById(`${prefix}-progress-label`).textContent = `Karte ${pos + 1} / ${order.length}`;
@@ -273,7 +273,7 @@ function initTopic(prefix, dataArray, htmlText) {
 }
 
 /* ============================================================
-   3. DATA: NEUE HEIMAT
+   3. DATA & CONFIG: NEUE HEIMAT
    ============================================================ */
 const neueHeimatData = [
   { verbindung: "ein Visum beantragen", bedeutung: "التقدم بطلب للحصول على تأشيرة", synonyme: "ein offizielles Dokument für die Einreise anfordern", beispielText: "„Ich musste mich um ein Visum kümmern...“", beispielNeu: "Bevor ich nach Australien reise, muss ich online ein Visum beantragen." },
