@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
   
   loadGlobalState(); 
   
-  // تشغيل الأقسام باستخدام الدالة الذكية (للدروس)
+  // تشغيل الأقسام (الدالة السحرية)
   initTopic('krach', krachData, krachTextRaw);
   initTopic('neueheimat', neueHeimatData, neueHeimatTextRaw);
   
@@ -28,7 +28,7 @@ function openPage(pageId) {
   window.scrollTo(0, 0);
 }
 
-// دالة تنقل الـ Tabs للدروس (Lesetext vs Flashcards vs Übungen)
+// تنقل الـ Tabs الرئيسية للدرس
 function switchTopicTab(prefix, tabName, btnElement) {
   const parent = btnElement.parentElement;
   parent.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
@@ -42,7 +42,7 @@ function switchTopicTab(prefix, tabName, btnElement) {
   document.getElementById(`${prefix}-${tabName}`).classList.add('active');
 }
 
-// دالة تنقل التدريبات (TEKAMOLO vs MCQ)
+// تنقل التدريبات (TEKAMOLO vs MCQ)
 function switchPracticeTab(prefix, tabName, btnElement) {
   const parent = btnElement.parentElement;
   parent.querySelectorAll('.fc-toggle-btn').forEach(btn => btn.classList.remove('active'));
@@ -53,9 +53,9 @@ function switchPracticeTab(prefix, tabName, btnElement) {
   document.getElementById(`${prefix}-${tabName}`).classList.add('active');
 }
 
-// دالة تنقل الـ Tabs داخل الفلاش كاردز (Überblick / Lernmodus / Review)
+// تنقل الـ Tabs داخل الفلاش كاردز (Überblick / Lernmodus / Review)
 document.querySelectorAll('.fc-toggle-btn').forEach(btn => {
-  if(btn.hasAttribute('onclick')) return; // ignore practice buttons
+  if(btn.hasAttribute('onclick')) return; // تجاهل أزرار التدريبات
   btn.addEventListener('click', () => {
     const parentContainer = btn.closest('.sub-view');
     parentContainer.querySelectorAll('.fc-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -65,7 +65,7 @@ document.querySelectorAll('.fc-toggle-btn').forEach(btn => {
     const targetId = btn.dataset.fcview;
     document.getElementById(targetId).classList.add('active');
     
-    // إعادة رسم الكارت عند الدخول لوضع المذاكرة
+    // تحديث الكارت عند الدخول لوضع المذاكرة
     if (targetId.includes('-study-view')) {
       const prefix = targetId.split('-study-view')[0];
       if(window[`renderStudyCard_${prefix}`]) window[`renderStudyCard_${prefix}`]();
@@ -82,7 +82,7 @@ let appState = {
 };
 
 function loadGlobalState() {
-  const saved = localStorage.getItem('engyzmo_state_v6'); 
+  const saved = localStorage.getItem('engyzmo_state_v7'); 
   if (saved) {
     const parsed = JSON.parse(saved);
     appState.krach = parsed.krach || appState.krach;
@@ -91,7 +91,7 @@ function loadGlobalState() {
 }
 
 function saveGlobalState() {
-  localStorage.setItem('engyzmo_state_v6', JSON.stringify(appState));
+  localStorage.setItem('engyzmo_state_v7', JSON.stringify(appState));
 }
 
 function shuffle(arr){
@@ -112,7 +112,7 @@ function showToast(msg){
 }
 
 /* ============================================================
-   2. THE MAGIC FUNCTION (دالة توليد الدروس التلقائية)
+   2. THE MAGIC FUNCTION (دالة توليد الدروس)
    ============================================================ */
 function initTopic(prefix, dataArray, htmlText) {
   const textContainer = document.getElementById(`${prefix}-text-container`);
@@ -142,12 +142,12 @@ function initTopic(prefix, dataArray, htmlText) {
               <h3 class="arabic-text" style="font-size:1.2rem;">${item.bedeutung}</h3>
             </div>
             <div class="fc-section fc-synonyme" style="margin-bottom:5px;">
-              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || item.bedeutungDe || ''}</p>
+              <p style="font-size:0.85rem; text-align:center; color:#fff;">${item.synonyme || ''}</p>
             </div>
             <hr class="fc-divider" style="margin:4px 0;">
             <div class="fc-section fc-text-beispiel" style="margin:0;">
               <span class="fc-icon" style="font-size:0.9rem;">📖</span>
-              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || item.beispiel || ''}</p>
+              <p style="font-size:0.75rem; line-height:1.2; text-align:left;">${item.beispielText || ''}</p>
             </div>
             ${!isReview 
               ? '<button class="review-btn" type="button" style="margin-top:auto; min-height:30px;">🔁 Needs Review</button>' 
@@ -216,8 +216,8 @@ function initTopic(prefix, dataArray, htmlText) {
     
     document.getElementById(`${prefix}-front-text`).textContent = item.verbindung;
     document.getElementById(`${prefix}-back-arabic`).textContent = item.bedeutung;
-    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || item.bedeutungDe || "";
-    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || item.beispiel || "";
+    document.getElementById(`${prefix}-back-synonyme`).textContent = item.synonyme || "";
+    document.getElementById(`${prefix}-back-textbeispiel`).textContent = item.beispielText || "";
     document.getElementById(`${prefix}-back-neuesbeispiel`).textContent = item.beispielNeu || "";
     
     document.getElementById(`${prefix}-progress-label`).textContent = `Karte ${pos + 1} / ${order.length}`;
@@ -277,35 +277,35 @@ function initTopic(prefix, dataArray, htmlText) {
    ============================================================ */
 const neueHeimatData = [
   { verbindung: "ein Visum beantragen", bedeutung: "التقدم بطلب للحصول على تأشيرة", synonyme: "ein offizielles Dokument für die Einreise anfordern", beispielText: "„Ich musste mich um ein Visum kümmern...“", beispielNeu: "Bevor ich nach Australien reise, muss ich online ein Visum beantragen." },
-  { verbindung: "eine Wohnung auflösen", bedeutung: "تصفية أو إخلاء الشقة", synonyme: "Wohnung leeren und Mietvertrag beenden", beispielText: "„...meine Wohnung auflösen usw.“", beispielNeu: "Weil er ins Ausland geht, muss er seine Wohnung auflösen." },
-  { verbindung: "Kontakte knüpfen", bedeutung: "تكوين علاقات / التعرف على أشخاص جدد", synonyme: "neue Leute kennenlernen; ein Netzwerk aufbauen", beispielText: "„...ich habe schnell viele neue Freunde gefunden.“", beispielNeu: "Auf der Konferenz konnte ich nützliche Kontakte knüpfen." },
-  { verbindung: "sich verabschieden (von + Dat.)", bedeutung: "توديع (شخص ما)", synonyme: "„Auf Wiedersehen“ sagen, bevor man geht", beispielText: "„Auch der Abschied von Freunden und Familie war natürlich traurig.“", beispielNeu: "Am Flughafen fiel es mir schwer, mich von meiner Familie zu verabschieden." },
+  { verbindung: "eine Wohnung auflösen", bedeutung: "تصفية أو إخلاء الشقة", synonyme: "Wohnung leeren und Mietvertrag beenden", beispielText: "„...meine Wohnung auflösen usw.“", beispielNeu: "Weil er ins Ausland geht, muss er nächste Woche seine Wohnung auflösen." },
+  { verbindung: "Kontakte knüpfen", bedeutung: "تكوين علاقات / التعرف على أشخاص جدد", synonyme: "neue Leute kennenlernen; ein Netzwerk aufbauen", beispielText: "„...ich habe schnell viele neue Freunde gefunden.“", beispielNeu: "Auf der internationalen Konferenz konnte ich viele nützliche Kontakte knüpfen." },
+  { verbindung: "sich verabschieden (von + Dat.)", bedeutung: "توديع (شخص ما)", synonyme: "„Auf Wiedersehen“ sagen, bevor man geht", beispielText: "„Auch der Abschied von Freunden und Familie war natürlich traurig.“", beispielNeu: "Am Flughafen fiel es mir sehr schwer, mich von meiner Familie zu verabschieden." },
   { verbindung: "einen Job kündigen", bedeutung: "الاستقالة من العمل", synonyme: "ein Arbeitsverhältnis offiziell beenden", beispielText: "„...den Job kündigen...“", beispielNeu: "Er hat seinen Job gekündigt, um sich selbstständig zu machen." },
-  { verbindung: "ein Konto eröffnen", bedeutung: "فتح حساب بنكي", synonyme: "bei einer Bank ein Bankkonto einrichten", beispielText: "Man muss viele Dinge im neuen Land erledigen.", beispielNeu: "Um mein Gehalt zu bekommen, muss ich ein Konto eröffnen." },
-  { verbindung: "sein gewohntes Leben aufgeben", bedeutung: "التخلي عن الحياة المعتادة", synonyme: "den normalen Alltag hinter sich lassen", beispielText: "„Mein gewohntes Leben aufgeben...“", beispielNeu: "Es erfordert viel Mut, sein gewohntes Leben aufzugeben." },
+  { verbindung: "ein Konto eröffnen", bedeutung: "فتح حساب بنكي", synonyme: "bei einer Bank ein Bankkonto einrichten", beispielText: "Man muss viele Dinge im neuen Land erledigen.", beispielNeu: "Um mein erstes Gehalt zu bekommen, muss ich sofort ein Konto eröffnen." },
+  { verbindung: "sein gewohntes Leben aufgeben", bedeutung: "التخلي عن الحياة المعتادة", synonyme: "den normalen Alltag hinter sich lassen", beispielText: "„Mein gewohntes Leben aufgeben...“", beispielNeu: "Es erfordert viel Mut, sein gewohntes Leben aufzugeben und wegzuziehen." },
   { verbindung: "komplett neu anfangen", bedeutung: "البدء من جديد تماماً", synonyme: "einen völlig neuen Lebensabschnitt beginnen", beispielText: "„...und in einem anderen Land komplett neu anfangen?“", beispielNeu: "Nach der Trennung hat sie in einer anderen Stadt komplett neu angefangen." },
-  { verbindung: "etwas wagen", bedeutung: "يجرؤ على شيء / يخاطر", synonyme: "den Mut haben, etwas Riskantes zu tun", beispielText: "„Ich habe es gewagt!“", beispielNeu: "Wer beruflich erfolgreich sein will, muss etwas wagen." },
-  { verbindung: "auswandern (nach + Dat.)", bedeutung: "يهاجر", synonyme: "Heimatland verlassen, um in einem anderen Land zu leben", beispielText: "„Ich bin ziemlich spontan nach Australien ausgewandert.“", beispielNeu: "Viele junge Menschen wandern nach Kanada aus." },
-  { verbindung: "jemanden zufällig kennenlernen", bedeutung: "التعرف على شخص بالصدفة", synonyme: "eine Person ohne Absicht treffen", beispielText: "„...als ich zufällig diesen netten Typen kennengelernt hatte...“", beispielNeu: "Ich habe meinen Chef ganz zufällig im Zug kennengelernt." },
-  { verbindung: "sich verlieben (in + Akk.)", bedeutung: "يقع في حب (شخص ما)", synonyme: "anfangen, romantische Gefühle zu haben", beispielText: "„...und mich in David verliebt hatte...“", beispielNeu: "Sie hat sich während ihres Urlaubs verliebt." },
-  { verbindung: "sein Leben komplett ändern", bedeutung: "تغيير حياته بالكامل", synonyme: "das Leben völlig anders gestalten", beispielText: "„...beschloss ich, mein Leben komplett zu ändern...“", beispielNeu: "Nach seiner Krankheit hat er beschlossen, sein Leben komplett zu ändern." },
-  { verbindung: "sich kümmern (um + Akk.)", bedeutung: "يعتني بـ / ينجز أمراً", synonyme: "Verantwortung für eine Aufgabe übernehmen", beispielText: "„Ich musste mich um ein Visum kümmern...“", beispielNeu: "Du musst dich um deine Dokumente kümmern." },
-  { verbindung: "zufrieden sein", bedeutung: "يكون راضياً عن", synonyme: "keine weiteren Wünsche haben, glücklich sein", beispielText: "„In meinem Job war ich eigentlich zufrieden...“", beispielNeu: "Ich bin mit meinen Prüfungsergebnissen zufrieden." },
-  { verbindung: "es fällt schwer / leicht", bedeutung: "يصعب / يسهل", synonyme: "Probleme (oder keine) damit haben, etwas zu tun", beispielText: "„...und es fiel mir nicht leicht zu kündigen.“", beispielNeu: "Es fällt ihm schwer, Deutsch zu lernen." },
-  { verbindung: "sich freuen (auf + Akk.)", bedeutung: "يتطلع إلى / يسعد بـ", synonyme: "Freude empfinden auf ein zukünftiges Ereignis", beispielText: "„...habe ich mich aber auf mein neues Leben gefreut.“", beispielNeu: "Ich freue mich riesig auf meinen nächsten Urlaub." },
-  { verbindung: "eine Arbeitserlaubnis bekommen", bedeutung: "الحصول على تصريح عمل", synonyme: "Genehmigung erhalten, arbeiten zu dürfen", beispielText: "„...und eine Arbeitserlaubnis zu bekommen, war schwieriger...“", beispielNeu: "Ich muss noch eine Arbeitserlaubnis bekommen, bevor ich starte." },
-  { verbindung: "Heimweh haben", bedeutung: "الشعور بالحنين إلى الوطن", synonyme: "Traurigkeit, weit weg von der Heimat zu sein", beispielText: "„Ich hatte ziemlich großes Heimweh.“", beispielNeu: "In den ersten Monaten in den USA hatte ich oft Heimweh." },
-  { verbindung: "Zeugnisse übersetzen lassen", bedeutung: "ترجمة الشهادات", synonyme: "Übersetzer beauftragen, Dokumente zu übertragen", beispielText: "„...meine Zeugnisse übersetzen lassen...“", beispielNeu: "Um studieren zu können, muss ich Zeugnisse übersetzen lassen." },
-  { verbindung: "sich streiten (mit + Dat.)", bedeutung: "يتجادل / يتشاجر", synonyme: "einen Konflikt austragen", beispielText: "„Wir haben uns einfach zu oft gestritten.“", beispielNeu: "Meine Nachbarn streiten sich fast jeden Tag." },
-  { verbindung: "nicht aufgeben", bedeutung: "لا يستسلم", synonyme: "nicht kapitulieren; weiterkämpfen", beispielText: "„Aber ich habe nicht aufgegeben...“", beispielNeu: "Auch wenn du Fehler machst, darfst du nicht aufgeben." },
-  { verbindung: "eine Entscheidung bereuen", bedeutung: "يندم على قرار", synonyme: "denken, dass eine Entscheidung falsch war", beispielText: "„Meine Entscheidung habe ich nie bereut.“", beispielNeu: "Ich habe meine Entscheidung Medizin zu studieren nie bereut." },
-  { verbindung: "die Erfahrung machen", bedeutung: "يمر بتجربة / يكتشف بالتجربة", synonyme: "durch eigenes Erleben etwas feststellen", beispielText: "„Ich habe die Erfahrung gemacht, dass man Zeit braucht...“", beispielNeu: "Ich habe die Erfahrung gemacht, dass man mit Ehrlichkeit weit kommt." },
-  { verbindung: "sich einleben (in + Dat.)", bedeutung: "يتأقلم / يندمج", synonyme: "sich an einen neuen Ort gewöhnen", beispielText: "„...um sich in einem fremden Land einzuleben.“", beispielNeu: "Es dauert Monate, bis man sich in einer neuen Stadt eingelebt hat." },
-  { verbindung: "den Horizont erweitern", bedeutung: "يوسع آفاقه", synonyme: "seinen Blickwinkel vergrößern", beispielText: "„So eine Auslandserfahrung erweitert einfach den Horizont.“", beispielNeu: "Ein Auslandssemester erweitert den Horizont." },
-  { verbindung: "viel über sich selbst erfahren", bedeutung: "يكتشف الكثير عن نفسه", synonyme: "eigene Persönlichkeit besser kennenlernen", beispielText: "„...und erfährt dadurch auch viel über sich selbst.“", beispielNeu: "In schwierigen Situationen kann man viel über sich selbst erfahren." },
-  { verbindung: "gestresst sein", bedeutung: "يكون مرهقاً / تحت ضغط", synonyme: "unter großer Anspannung stehen", beispielText: "„Die Leute sind nicht immer so gestresst...“", beispielNeu: "Vor Prüfungen sind Studenten sehr gestresst." },
-  { verbindung: "sehnsüchtig warten (auf + Akk.)", bedeutung: "ينتظر بشوق", synonyme: "mit Vorfreude warten", beispielText: "„Und ich warte seit Monaten sehnsüchtig auf den Besuch...“", beispielNeu: "Die Kinder warten sehnsüchtig auf die Sommerferien." },
-  { verbindung: "sich genau ausdrücken", bedeutung: "يعبر عن نفسه بدقة", synonyme: "präzise formulieren, was man denkt", beispielText: "„...kann ich trotzdem nicht immer ganz genau das ausdrücken...“", beispielNeu: "In einer Fremdsprache ist es schwer, sich genau auszudrücken." }
+  { verbindung: "etwas wagen", bedeutung: "يجرؤ على شيء / يخاطر", synonyme: "den Mut haben, etwas Riskantes zu tun", beispielText: "„Ich habe es gewagt!“", beispielNeu: "Wer beruflich erfolgreich sein will, muss manchmal auch etwas wagen." },
+  { verbindung: "auswandern (nach + Dat.)", bedeutung: "يهاجر", synonyme: "Heimatland verlassen, um in einem anderen Land zu leben", beispielText: "„Ich bin letztes Jahr ziemlich spontan nach Australien ausgewandert.“", beispielNeu: "Viele junge Menschen wandern nach Kanada aus, um dort zu arbeiten." },
+  { verbindung: "jemanden zufällig kennenlernen", bedeutung: "التعرف على شخص بالصدفة", synonyme: "eine Person ohne Absicht treffen", beispielText: "„...als ich vor zwei Jahren zufällig diesen netten Typen kennengelernt hatte...“", beispielNeu: "Ich habe meinen heutigen Chef ganz zufällig im Zug kennengelernt." },
+  { verbindung: "sich verlieben (in + Akk.)", bedeutung: "يقع في حب (شخص ما)", synonyme: "anfangen, romantische Gefühle zu haben", beispielText: "„...und mich in David verliebt hatte...“", beispielNeu: "Sie hat sich während ihres Sommerurlaubs in ihren Reiseleiter verliebt." },
+  { verbindung: "sein Leben komplett ändern", bedeutung: "تغيير حياته بالكامل", synonyme: "das Leben völlig anders gestalten", beispielText: "„...beschloss ich, mein Leben komplett zu ändern...“", beispielNeu: "Nach seiner schweren Krankheit hat er beschlossen, sein Leben komplett zu ändern." },
+  { verbindung: "sich kümmern (um + Akk.)", bedeutung: "يعتني بـ / ينجز أمراً", synonyme: "Verantwortung für eine Aufgabe übernehmen", beispielText: "„Ich musste mich um ein Visum kümmern...“", beispielNeu: "Du musst dich rechtzeitig um deine Flugtickets kümmern." },
+  { verbindung: "zufrieden sein", bedeutung: "يكون راضياً عن", synonyme: "keine weiteren Wünsche haben, glücklich sein", beispielText: "„In meinem Job war ich eigentlich zufrieden...“", beispielNeu: "Ich bin mit meinen Prüfungsergebnissen in diesem Semester sehr zufrieden." },
+  { verbindung: "es fällt schwer / leicht", bedeutung: "يصعب / يسهل على شخص ما", synonyme: "Probleme (oder keine) damit haben, etwas zu tun", beispielText: "„...und es fiel mir nicht leicht zu kündigen.“", beispielNeu: "Es fällt ihm schwer, Deutsch zu lernen, weil die Grammatik kompliziert ist." },
+  { verbindung: "sich freuen (auf + Akk.)", bedeutung: "يتطلع إلى / يسعد بـ", synonyme: "Freude empfinden auf ein zukünftiges Ereignis", beispielText: "„...habe ich mich aber auf mein neues Leben gefreut.“", beispielNeu: "Ich freue mich schon riesig auf meinen nächsten Urlaub in Spanien." },
+  { verbindung: "eine Arbeitserlaubnis bekommen", bedeutung: "الحصول على تصريح عمل", synonyme: "Genehmigung erhalten, arbeiten zu dürfen", beispielText: "„...und eine Arbeitserlaubnis zu bekommen, war schwieriger...“", beispielNeu: "Ohne eine gültige Arbeitserlaubnis darfst du in Deutschland nicht arbeiten." },
+  { verbindung: "Heimweh haben", bedeutung: "الشعور بالحنين إلى الوطن", synonyme: "Traurigkeit, weit weg von der Heimat zu sein", beispielText: "„Ich hatte ziemlich großes Heimweh.“", beispielNeu: "In den ersten Monaten in den USA hatte ich abends oft schreckliches Heimweh." },
+  { verbindung: "Zeugnisse übersetzen lassen", bedeutung: "ترجمة الشهادات", synonyme: "Übersetzer beauftragen, Dokumente zu übertragen", beispielText: "„...meine Zeugnisse übersetzen lassen...“", beispielNeu: "Um an der Uni studieren zu können, muss ich meine Zeugnisse übersetzen lassen." },
+  { verbindung: "sich streiten (mit + Dat.)", bedeutung: "يتجادل / يتشاجر", synonyme: "einen Konflikt austragen", beispielText: "„Wir haben uns einfach zu oft gestritten.“", beispielNeu: "Meine Nachbarn streiten sich fast jeden Tag lautstark über Kleinigkeiten." },
+  { verbindung: "nicht aufgeben", bedeutung: "لا يستسلم", synonyme: "nicht kapitulieren; weiterkämpfen", beispielText: "„Aber ich habe nicht aufgegeben...“", beispielNeu: "Auch wenn du gestern einen Fehler gemacht hast, darfst du heute nicht aufgeben." },
+  { verbindung: "eine Entscheidung bereuen", bedeutung: "يندم على قرار", synonyme: "denken, dass eine Entscheidung falsch war", beispielText: "„Meine Entscheidung habe ich nie bereut.“", beispielNeu: "Ich habe meine Entscheidung, Medizin zu studieren, bis heute nie bereut." },
+  { verbindung: "die Erfahrung machen", bedeutung: "يمر بتجربة / يكتشف بالتجربة", synonyme: "durch eigenes Erleben etwas feststellen", beispielText: "„Ich habe die Erfahrung gemacht, dass man Zeit braucht...“", beispielNeu: "Ich habe die Erfahrung gemacht, dass man mit Ehrlichkeit am weitesten kommt." },
+  { verbindung: "sich einleben (in + Dat.)", bedeutung: "يتأقلم / يندمج", synonyme: "sich an einen neuen Ort gewöhnen", beispielText: "„...um sich in einem fremden Land einzuleben.“", beispielNeu: "Es dauert oft ein paar Monate, bis man sich in einer neuen Stadt richtig eingelebt hat." },
+  { verbindung: "den Horizont erweitern", bedeutung: "يوسع آفاقه", synonyme: "seinen Blickwinkel vergrößern", beispielText: "„So eine Auslandserfahrung erweitert einfach den Horizont.“", beispielNeu: "Ein Auslandssemester ist eine großartige Möglichkeit, den Horizont zu erweitern." },
+  { verbindung: "viel über sich selbst erfahren", bedeutung: "يكتشف الكثير عن نفسه", synonyme: "eigene Persönlichkeit besser kennenlernen", beispielText: "„...und erfährt dadurch auch viel über sich selbst.“", beispielNeu: "In sehr schwierigen Situationen kann man oft viel über sich selbst erfahren." },
+  { verbindung: "gestresst sein", bedeutung: "يكون مرهقاً / تحت ضغط", synonyme: "unter großer Anspannung stehen", beispielText: "„Die Leute sind nicht immer so gestresst...“", beispielNeu: "Vor den Abschlussprüfungen sind die meisten Studenten sehr gestresst." },
+  { verbindung: "sehnsüchtig warten (auf + Akk.)", bedeutung: "ينتظر بشوق / بلهفة", synonyme: "mit Vorfreude warten", beispielText: "„Und ich warte seit Monaten sehnsüchtig auf den Besuch...“", beispielNeu: "Die Kinder warten schon sehnsüchtig auf den Beginn der Sommerferien." },
+  { verbindung: "sich genau ausdrücken", bedeutung: "يعبر عن نفسه بدقة", synonyme: "präzise formulieren, was man denkt", beispielText: "„...kann ich trotzdem nicht immer ganz genau das ausdrücken...“", beispielNeu: "In einer Fremdsprache ist es manchmal schwer, sich wirklich genau auszudrücken." }
 ];
 
 const neueHeimatTextRaw = `
@@ -317,6 +317,226 @@ const neueHeimatTextRaw = `
 <p><span class="vocab-word" data-meaning="يندم على قرار">Meine Entscheidung habe ich nie bereut</span>. Ich habe <span class="vocab-word" data-meaning="يمر بتجربة أن... / يكتشف بالتجربة أن...">die Erfahrung gemacht, dass</span> man einfach Zeit braucht, um <span class="vocab-word" data-meaning="يتأقلم / يندمج في مكان جديد">sich</span> in einem fremden Land <span class="vocab-word" data-meaning="يتأقلم / يندمج في مكان جديد">einzuleben</span>. Es ist aber ein tolles Gefühl, es zu schaffen. So eine Auslandserfahrung <span class="vocab-word" data-meaning="يوسع آفاقه (مداركه)">erweitert einfach den Horizont</span>. Man lernt die Kultur eines anderen Landes kennen und <span class="vocab-word" data-meaning="يكتشف الكثير عن نفسه">erfährt dadurch auch viel über sich selbst</span> und die eigene Kultur.</p>
 <p>Am Anfang hatte ich trotz vieler Jahre Englischunterricht in der Schule Probleme mit der Sprache, aber mittlerweile ist mein Englisch richtig gut. Außerdem ist das Leben hier wirklich angenehm. Das Wetter, das Meer und die Landschaft sind einfach super. Überraschend war für mich, dass das Leben hier lockerer als in Deutschland ist. Die Leute sind nicht immer so <span class="vocab-word" data-meaning="يكون مرهقاً / تحت ضغط كبير">gestresst</span> und ich habe schnell viele neue Freunde gefunden. In Deutschland dauert das ja oft ein bisschen länger ... Natürlich skype ich auch jetzt noch oft stundenlang mit alten Freunden in Deutschland. Aber es ist besser als am Anfang. Da konnte ich oft an nichts anderes denken und habe täglich mehrere SMS und E-Mails nach Deutschland geschickt, jetzt schreibe ich meinen Eltern einmal pro Woche eine längere E-Mail. Es ist nicht immer einfach, so weit weg zu sein. Und ich warte seit Monaten <span class="vocab-word" data-meaning="ينتظر بشوق / بلهفة">sehnsüchtig auf</span> den Besuch meiner besten Freundin. Auch wenn ich wirklich gut Englisch spreche, kann ich trotzdem nicht immer ganz <span class="vocab-word" data-meaning="يعبر عن نفسه بدقة">genau das ausdrücken</span>, was ich denke oder fühle. Da tut es einfach gut, zwischendurch mal in der eigenen Sprache zu sprechen. 🙂</p>
 `;
+
+/* ============================================================
+   3.5 PRACTICE DATA & LOGIC: NEUE HEIMAT
+   ============================================================ */
+// TEKAMOLO Sentences (Mobile Drag and Drop)
+const tekamoloData = [
+  { parts: ["Er hat", "seine Wohnung aufgelöst.", "in Berlin", "schnell", "gestern", "wegen des Umzugs"], correct: ["Er hat", "gestern", "wegen des Umzugs", "schnell", "in Berlin", "seine Wohnung aufgelöst."] },
+  { parts: ["Sie will", "mutig", "nächstes Jahr", "aus beruflichen Gründen", "auswandern.", "nach Kanada"], correct: ["Sie will", "nächstes Jahr", "aus beruflichen Gründen", "mutig", "nach Kanada", "auswandern."] },
+  { parts: ["Wir haben uns", "heute Morgen", "gestritten.", "lautstark", "im Flur", "wegen des Lärms"], correct: ["Wir haben uns", "heute Morgen", "wegen des Lärms", "lautstark", "im Flur", "gestritten."] },
+  { parts: ["Ich muss", "unbedingt", "für die Arbeit", "ein Konto eröffnen.", "bei der Bank", "nächste Woche"], correct: ["Ich muss", "nächste Woche", "für die Arbeit", "unbedingt", "bei der Bank", "ein Konto eröffnen."] },
+  { parts: ["Er hat", "vor einem Monat", "seinen Job gekündigt.", "sofort", "in der Firma", "wegen des Stresses"], correct: ["Er hat", "vor einem Monat", "wegen des Stresses", "sofort", "in der Firma", "seinen Job gekündigt."] },
+  { parts: ["Sie hat", "am Wochenende", "spontan", "aus Zufall", "einen Mann kennengelernt.", "im Park"], correct: ["Sie hat", "am Wochenende", "aus Zufall", "spontan", "im Park", "einen Mann kennengelernt."] },
+  { parts: ["Wir müssen", "im Konsulat", "heute", "dringend", "für das Studium", "ein Visum beantragen."], correct: ["Wir müssen", "heute", "für das Studium", "dringend", "im Konsulat", "ein Visum beantragen."] },
+  { parts: ["Er hat", "letztes Jahr", "komplett neu angefangen.", "in Australien", "völlig spontan", "aus Liebe"], correct: ["Er hat", "letztes Jahr", "aus Liebe", "völlig spontan", "in Australien", "komplett neu angefangen."] },
+  { parts: ["Sie hat", "aus Einsamkeit", "gestern Abend", "Heimweh gehabt.", "sehr stark", "im Hotelzimmer"], correct: ["Sie hat", "gestern Abend", "aus Einsamkeit", "sehr stark", "im Hotelzimmer", "Heimweh gehabt."] },
+  { parts: ["Ich muss", "morgen", "beim Amt", "offiziell", "für die Uni", "Zeugnisse übersetzen lassen."], correct: ["Ich muss", "morgen", "für die Uni", "offiziell", "beim Amt", "Zeugnisse übersetzen lassen."] },
+  { parts: ["Er hat sich", "im Urlaub", "am Strand", "in sie verliebt.", "schnell", "aus heiterem Himmel"], correct: ["Er hat sich", "im Urlaub", "aus heiterem Himmel", "schnell", "am Strand", "in sie verliebt."] },
+  { parts: ["Sie hat sich", "wegen der Dokumente", "vorhin", "intensiv", "um alles gekümmert.", "am Schreibtisch"], correct: ["Sie hat sich", "vorhin", "wegen der Dokumente", "intensiv", "am Schreibtisch", "um alles gekümmert."] },
+  { parts: ["Wir haben", "aus Interesse", "in der Pause", "letztes Wochenende", "sehr leicht", "Kontakte geknüpft."], correct: ["Wir haben", "letztes Wochenende", "aus Interesse", "sehr leicht", "in der Pause", "Kontakte geknüpft."] },
+  { parts: ["Ich habe", "heute", "die Arbeitserlaubnis bekommen.", "wegen der Zusage", "im Amt", "glücklich"], correct: ["Ich habe", "heute", "wegen der Zusage", "glücklich", "im Amt", "die Arbeitserlaubnis bekommen."] },
+  { parts: ["Er hat", "komplett", "sein Leben geändert.", "wegen der Krankheit", "im letzten Monat", "in der Heimat"], correct: ["Er hat", "im letzten Monat", "wegen der Krankheit", "komplett", "in der Heimat", "sein Leben geändert."] },
+  { parts: ["Sie hat", "etwas Neues gewagt.", "aus Neugier", "mutig", "gestern", "im Büro"], correct: ["Sie hat", "gestern", "aus Neugier", "mutig", "im Büro", "etwas Neues gewagt."] },
+  { parts: ["Ich bin", "sehr glücklich", "in der Uni", "wegen der Noten", "zufrieden gewesen.", "heute"], correct: ["Ich bin", "heute", "wegen der Noten", "sehr glücklich", "in der Uni", "zufrieden gewesen."] },
+  { parts: ["Es fällt mir", "wegen der Sprache", "in Deutschland", "ziemlich schwer", "momentan", "zu studieren."], correct: ["Es fällt mir", "momentan", "wegen der Sprache", "ziemlich schwer", "in Deutschland", "zu studieren."] },
+  { parts: ["Wir haben uns", "aus Wut", "ziemlich heftig", "gestern", "gestritten.", "im Wohnzimmer"], correct: ["Wir haben uns", "gestern", "aus Wut", "ziemlich heftig", "im Wohnzimmer", "gestritten."] },
+  { parts: ["Sie hat", "heute", "ihre Entscheidung bereut.", "leise", "aus Überzeugung", "im Zimmer"], correct: ["Sie hat", "heute", "aus Überzeugung", "leise", "im Zimmer", "ihre Entscheidung bereut."] }
+];
+
+function buildTekamolo() {
+  const container = document.getElementById('tekamolo-container');
+  if(!container) return;
+  container.innerHTML = '';
+  
+  tekamoloData.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'tekamolo-item';
+    row.innerHTML = `<p style="font-weight:700; margin-top:0; color:var(--primary-dark);">Satz ${index + 1}:</p>`;
+    
+    const chipWrapper = document.createElement('div');
+    chipWrapper.className = 'tekamolo-chips';
+    
+    item.parts.forEach((part, i) => {
+      const chip = document.createElement('div');
+      chip.className = 't-chip';
+      chip.textContent = part;
+      chipWrapper.appendChild(chip);
+    });
+    
+    enableMobileSortable(chipWrapper);
+    
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'primary-btn';
+    checkBtn.textContent = 'Prüfen';
+    
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'tekamolo-result';
+    
+    checkBtn.addEventListener('click', () => {
+      const currentOrder = Array.from(chipWrapper.children).filter(c => !c.classList.contains('t-chip-ghost')).map(c => c.textContent);
+      if(JSON.stringify(currentOrder) === JSON.stringify(item.correct)) {
+        resultDiv.textContent = 'Richtig! 🎉 ' + item.correct.join(' ');
+        resultDiv.className = 'tekamolo-result correct';
+      } else {
+        resultDiv.innerHTML = `Falsch! ❌<br>Korrekt ist:<br><b>${item.correct.join(' ')}</b>`;
+        resultDiv.className = 'tekamolo-result wrong';
+      }
+    });
+    
+    row.appendChild(chipWrapper);
+    row.appendChild(checkBtn);
+    row.appendChild(resultDiv);
+    container.appendChild(row);
+  });
+}
+
+function enableMobileSortable(container) {
+  let draggingItem = null;
+  let ghost = null;
+  let startX = 0, startY = 0;
+  let initX = 0, initY = 0;
+
+  container.addEventListener('touchstart', handleStart, {passive: false});
+  container.addEventListener('mousedown', handleStart);
+
+  function handleStart(e) {
+    if(e.target.tagName !== 'DIV' || !e.target.classList.contains('t-chip')) return;
+    draggingItem = e.target;
+    
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX; startY = touch.clientY;
+    
+    const rect = draggingItem.getBoundingClientRect();
+    initX = rect.left; initY = rect.top;
+
+    ghost = draggingItem.cloneNode(true);
+    ghost.classList.add('t-chip-ghost');
+    ghost.style.left = initX + 'px';
+    ghost.style.top = initY + 'px';
+    ghost.style.width = rect.width + 'px';
+    
+    document.body.appendChild(ghost);
+    draggingItem.classList.add('dragging');
+
+    document.addEventListener('touchmove', handleMove, {passive: false});
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+  }
+
+  function handleMove(e) {
+    if(!draggingItem) return;
+    e.preventDefault(); 
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+
+    ghost.style.left = (initX + dx) + 'px';
+    ghost.style.top = (initY + dy) + 'px';
+
+    ghost.style.display = 'none';
+    const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    ghost.style.display = 'block';
+
+    if(!elemBelow) return;
+    const targetItem = elemBelow.closest('.t-chip');
+    if(targetItem && targetItem !== draggingItem && targetItem.parentElement === container && !targetItem.classList.contains('t-chip-ghost')) {
+      const rect = targetItem.getBoundingClientRect();
+      const next = (touch.clientX - rect.left) / rect.width > 0.5;
+      container.insertBefore(draggingItem, next ? targetItem.nextSibling : targetItem);
+    }
+  }
+
+  function handleEnd() {
+    if(!draggingItem) return;
+    draggingItem.classList.remove('dragging');
+    if(ghost) ghost.remove();
+    draggingItem = null; ghost = null;
+    
+    document.removeEventListener('touchmove', handleMove);
+    document.removeEventListener('touchend', handleEnd);
+    document.removeEventListener('mousemove', handleMove);
+    document.removeEventListener('mouseup', handleEnd);
+  }
+}
+
+// 30 Custom MCQ Questions based on Neue Heimat Data
+function buildNeueHeimatMCQ() {
+  const container = document.getElementById('nh-mcq-container');
+  if(!container) return;
+  container.innerHTML = '';
+  
+  const customMCQs = [
+    { s: "Bevor ich nach Australien reise, muss ich online <b>ein Visum beantragen</b>.", correct: "التقدم بطلب للحصول على تأشيرة", w1: "تجديد جواز السفر", w2: "شراء تذكرة طيران" },
+    { s: "Weil er ins Ausland geht, muss er nächste Woche <b>seine Wohnung auflösen</b>.", correct: "تصفية أو إخلاء الشقة", w1: "تنظيف الشقة", w2: "تأجير الشقة" },
+    { s: "Auf der internationalen Konferenz konnte ich viele nützliche <b>Kontakte knüpfen</b>.", correct: "تكوين علاقات / التعرف على أشخاص جدد", w1: "إنهاء العلاقات", w2: "تجنب التحدث مع الناس" },
+    { s: "Am Flughafen fiel es mir sehr schwer, <b>mich</b> von meiner Familie <b>zu verabschieden</b>.", correct: "توديع (شخص ما)", w1: "استقبال (شخص ما)", w2: "الانتظار مع" },
+    { s: "Er hat <b>seinen Job gekündigt</b>, um sich selbstständig zu machen.", correct: "الاستقالة من العمل", w1: "البحث عن عمل", w2: "الترقية في العمل" },
+    { s: "Um mein erstes Gehalt zu bekommen, muss ich sofort <b>ein Konto eröffnen</b>.", correct: "فتح حساب بنكي", w1: "سحب أموال", w2: "إغلاق الحساب" },
+    { s: "Es erfordert viel Mut, <b>sein gewohntes Leben aufzugeben</b> und wegzuziehen.", correct: "التخلي عن الحياة المعتادة", w1: "الحفاظ على الروتين", w2: "الاستمتاع بالحياة" },
+    { s: "Nach der Trennung hat sie in einer anderen Stadt <b>komplett neu angefangen</b>.", correct: "البدء من جديد تماماً", w1: "العودة للماضي", w2: "التفكير في المستقبل" },
+    { s: "Wer beruflich erfolgreich sein will, muss manchmal auch <b>etwas wagen</b>.", correct: "يجرؤ على شيء / يخاطر", w1: "يتجنب المخاطر", w2: "يعمل بهدوء" },
+    { s: "Viele junge Menschen <b>wandern</b> nach Kanada <b>aus</b>, um dort zu arbeiten.", correct: "يهاجر", w1: "يسافر للسياحة", w2: "يعود إلى وطنه" },
+    { s: "Ich habe meinen heutigen Chef ganz <b>zufällig kennengelernt</b>.", correct: "التعرف على شخص بالصدفة", w1: "التعرف بشكل رسمي", w2: "تجاهل شخص ما" },
+    { s: "Sie hat <b>sich</b> während ihres Sommerurlaubs in ihren Reiseleiter <b>verliebt</b>.", correct: "يقع في حب (شخص ما)", w1: "يتشاجر مع", w2: "ينسى" },
+    { s: "Nach seiner schweren Krankheit hat er beschlossen, <b>sein Leben komplett zu ändern</b>.", correct: "تغيير حياته بالكامل", w1: "الحفاظ على صحته", w2: "العمل بجد" },
+    { s: "Du musst <b>dich</b> rechtzeitig <b>um</b> deine Flugtickets <b>kümmern</b>.", correct: "يعتني بـ / ينجز أمراً", w1: "ينسى", w2: "يتجاهل" },
+    { s: "Ich bin mit meinen Prüfungsergebnissen in diesem Semester sehr <b>zufrieden</b>.", correct: "يكون راضياً عن", w1: "غاضب من", w2: "حزين بسبب" },
+    { s: "Es <b>fällt</b> ihm <b>schwer</b>, Deutsch zu lernen, weil die Grammatik kompliziert ist.", correct: "يصعب على شخص ما", w1: "يسهل على شخص ما", w2: "لا يهتم بـ" },
+    { s: "Ich <b>freue mich</b> schon riesig <b>auf</b> meinen nächsten Urlaub in Spanien.", correct: "يتطلع إلى / يسعد بـ", w1: "يخاف من", w2: "ينسى" },
+    { s: "Ich muss noch <b>eine Arbeitserlaubnis bekommen</b>, bevor ich starte.", correct: "الحصول على تصريح عمل", w1: "الحصول على إجازة", w2: "دفع الضرائب" },
+    { s: "In den ersten Monaten in den USA hatte ich abends oft schreckliches <b>Heimweh</b>.", correct: "الشعور بالحنين إلى الوطن", w1: "الشعور بالسعادة", w2: "الرغبة في السفر" },
+    { s: "Um an der Uni studieren zu können, muss ich meine <b>Zeugnisse übersetzen lassen</b>.", correct: "ترجمة الشهادات", w1: "تصديق الشهادات", w2: "نسخ الشهادات" },
+    { s: "Meine Nachbarn <b>streiten sich</b> fast jeden Tag lautstark über Kleinigkeiten.", correct: "يتجادل / يتشاجر", w1: "يتصالح", w2: "يضحك بصوت عالٍ" },
+    { s: "Auch wenn du gestern einen Fehler gemacht hast, darfst du heute <b>nicht aufgeben</b>.", correct: "لا يستسلم", w1: "يتوقف عن العمل", w2: "يستريح طويلاً" },
+    { s: "Ich habe <b>meine Entscheidung</b>, Medizin zu studieren, bis heute nie <b>bereut</b>.", correct: "يندم على قرار", w1: "يفرح بالقرار", w2: "يؤجل القرار" },
+    { s: "Ich habe <b>die Erfahrung gemacht</b>, dass man mit Ehrlichkeit am weitesten kommt.", correct: "يمر بتجربة / يكتشف بالتجربة", w1: "ينسى ما حدث", w2: "يتجاهل النصيحة" },
+    { s: "Es dauert oft ein paar Monate, bis man <b>sich</b> in einer neuen Stadt richtig <b>eingelebt hat</b>.", correct: "يتأقلم / يندمج", w1: "يشعر بالملل", w2: "يضيع في الزحام" },
+    { s: "Ein Auslandssemester ist eine großartige Möglichkeit, den eigenen <b>Horizont zu erweitern</b>.", correct: "يوسع آفاقه", w1: "يضيق تفكيره", w2: "يتوقف عن التعلم" },
+    { s: "In sehr schwierigen Situationen kann man oft <b>viel über sich selbst erfahren</b>.", correct: "يكتشف الكثير عن نفسه", w1: "ينسى هويته", w2: "يتجاهل مشاعره" },
+    { s: "Vor den Abschlussprüfungen sind die meisten Studenten sehr <b>gestresst</b>.", correct: "يكون مرهقاً / تحت ضغط", w1: "يكون هادئاً", w2: "يكون سعيداً" },
+    { s: "Die Kinder <b>warten</b> schon <b>sehnsüchtig auf</b> den Beginn der Sommerferien.", correct: "ينتظر بشوق / بلهفة", w1: "ينسى الموعد", w2: "يتجاهل الحدث" },
+    { s: "In einer Fremdsprache ist es manchmal schwer, <b>sich</b> wirklich <b>genau auszudrücken</b>.", correct: "يعبر عن نفسه بدقة", w1: "يتحدث بصوت عالٍ", w2: "يكتب بسرعة" }
+  ];
+
+  const shuffledQuestions = shuffle(customMCQs);
+  
+  shuffledQuestions.forEach((q, qIndex) => {
+    const options = shuffle([{t: q.correct, c: true}, {t: q.w1, c: false}, {t: q.w2, c: false}]);
+    
+    const item = document.createElement('div');
+    item.className = 'mcq-item';
+    
+    item.innerHTML = `
+      <div class="mcq-question" style="direction:ltr; text-align:left;">
+        ${qIndex + 1}. Was bedeutet der markierte Ausdruck?<br>
+        <span style="font-weight:500; font-style:italic; color:var(--primary-dark); display:inline-block; margin-top:8px;">"${q.s}"</span>
+      </div>
+      <div class="mcq-options"></div>
+    `;
+    
+    const optionsWrap = item.querySelector('.mcq-options');
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'mcq-option'; 
+      btn.textContent = opt.t;
+      
+      btn.addEventListener('click', () => {
+        const allBtns = optionsWrap.querySelectorAll('.mcq-option');
+        allBtns.forEach(b => b.classList.add('disabled'));
+        if(opt.c){ btn.classList.add('correct'); } 
+        else {
+          btn.classList.add('wrong');
+          allBtns.forEach(b => { if(b.textContent === q.correct) b.classList.add('correct'); });
+        }
+      });
+      optionsWrap.appendChild(btn);
+    });
+    container.appendChild(item);
+  });
+}
 
 /* ============================================================
    4. DATA: KRACH IN DER W.G
@@ -391,7 +611,7 @@ const krachTextRaw = `
 `;
 
 /* ============================================================
-   5. TOOLTIP LOGIC (Robust for Mobile)
+   5. TOOLTIP LOGIC (Robust for Mobile / Touch)
    ============================================================ */
 function setupTooltips() {
   const tooltip = document.getElementById('custom-tooltip');
@@ -400,13 +620,11 @@ function setupTooltips() {
     const word = e.target.closest('.vocab-word');
     const isTooltipClick = e.target.closest('#custom-tooltip');
     
-    // إزالة التحديد عن أي كلمة سابقة
     document.querySelectorAll('.vocab-word.active-link').forEach(el => {
       if(el !== word) el.classList.remove('active-link');
     });
 
     if (word) {
-      // إضاءة الكلمة (ومقاطعها إذا كانت فعل منفصل)
       const groupId = word.dataset.group;
       if (groupId) { 
         document.querySelectorAll(`.vocab-word[data-group="${groupId}"]`).forEach(el => el.classList.add('active-link')); 
@@ -426,218 +644,4 @@ function setupTooltips() {
   });
 
   window.addEventListener('scroll', () => { tooltip.classList.add('hidden'); });
-}
-
-/* ============================================================
-   6. PRACTICE: TEKAMOLO (MOBILE DRAG & DROP)
-   ============================================================ */
-const tekamoloData = [
-  { parts: ["Er hat", "seine Wohnung aufgelöst.", "in Berlin", "schnell", "gestern", "wegen des Umzugs"], correct: ["Er hat", "gestern", "wegen des Umzugs", "schnell", "in Berlin", "seine Wohnung aufgelöst."] },
-  { parts: ["Sie will", "mutig", "nächstes Jahr", "aus beruflichen Gründen", "auswandern.", "nach Kanada"], correct: ["Sie will", "nächstes Jahr", "aus beruflichen Gründen", "mutig", "nach Kanada", "auswandern."] },
-  { parts: ["Wir haben uns", "heute Morgen", "gestritten.", "lautstark", "im Flur", "wegen des Lärms"], correct: ["Wir haben uns", "heute Morgen", "wegen des Lärms", "lautstark", "im Flur", "gestritten."] },
-  { parts: ["Ich muss", "unbedingt", "für die Arbeit", "ein Konto eröffnen.", "bei der Bank", "nächste Woche"], correct: ["Ich muss", "nächste Woche", "für die Arbeit", "unbedingt", "bei der Bank", "ein Konto eröffnen."] },
-  { parts: ["Er hat", "vor einem Monat", "seinen Job gekündigt.", "sofort", "in der Firma", "wegen des Stresses"], correct: ["Er hat", "vor einem Monat", "wegen des Stresses", "sofort", "in der Firma", "seinen Job gekündigt."] },
-  { parts: ["Sie hat", "am Wochenende", "spontan", "aus Zufall", "einen Mann kennengelernt.", "im Park"], correct: ["Sie hat", "am Wochenende", "aus Zufall", "spontan", "im Park", "einen Mann kennengelernt."] },
-  { parts: ["Wir müssen", "im Konsulat", "heute", "dringend", "für das Studium", "ein Visum beantragen."], correct: ["Wir müssen", "heute", "für das Studium", "dringend", "im Konsulat", "ein Visum beantragen."] },
-  { parts: ["Er hat", "letztes Jahr", "komplett neu angefangen.", "in Australien", "völlig spontan", "aus Liebe"], correct: ["Er hat", "letztes Jahr", "aus Liebe", "völlig spontan", "in Australien", "komplett neu angefangen."] },
-  { parts: ["Sie hat", "aus Einsamkeit", "gestern Abend", "Heimweh gehabt.", "sehr stark", "im Hotelzimmer"], correct: ["Sie hat", "gestern Abend", "aus Einsamkeit", "sehr stark", "im Hotelzimmer", "Heimweh gehabt."] },
-  { parts: ["Ich muss", "morgen", "beim Amt", "offiziell", "für die Uni", "Zeugnisse übersetzen lassen."], correct: ["Ich muss", "morgen", "für die Uni", "offiziell", "beim Amt", "Zeugnisse übersetzen lassen."] },
-  { parts: ["Er hat sich", "im Urlaub", "am Strand", "in sie verliebt.", "schnell", "aus heiterem Himmel"], correct: ["Er hat sich", "im Urlaub", "aus heiterem Himmel", "schnell", "am Strand", "in sie verliebt."] },
-  { parts: ["Sie hat sich", "wegen der Dokumente", "vorhin", "intensiv", "um alles gekümmert.", "am Schreibtisch"], correct: ["Sie hat sich", "vorhin", "wegen der Dokumente", "intensiv", "am Schreibtisch", "um alles gekümmert."] },
-  { parts: ["Wir haben", "aus Interesse", "in der Pause", "letztes Wochenende", "sehr leicht", "Kontakte geknüpft."], correct: ["Wir haben", "letztes Wochenende", "aus Interesse", "sehr leicht", "in der Pause", "Kontakte geknüpft."] },
-  { parts: ["Ich habe", "heute", "die Arbeitserlaubnis bekommen.", "wegen der Zusage", "im Amt", "glücklich"], correct: ["Ich habe", "heute", "wegen der Zusage", "glücklich", "im Amt", "die Arbeitserlaubnis bekommen."] },
-  { parts: ["Er hat", "komplett", "sein Leben geändert.", "wegen der Krankheit", "im letzten Monat", "in der Heimat"], correct: ["Er hat", "im letzten Monat", "wegen der Krankheit", "komplett", "in der Heimat", "sein Leben geändert."] },
-  { parts: ["Sie hat", "etwas Neues gewagt.", "aus Neugier", "mutig", "gestern", "im Büro"], correct: ["Sie hat", "gestern", "aus Neugier", "mutig", "im Büro", "etwas Neues gewagt."] },
-  { parts: ["Ich bin", "sehr glücklich", "in der Uni", "wegen der Noten", "zufrieden gewesen.", "heute"], correct: ["Ich bin", "heute", "wegen der Noten", "sehr glücklich", "in der Uni", "zufrieden gewesen."] },
-  { parts: ["Es fällt mir", "wegen der Sprache", "in Deutschland", "ziemlich schwer", "momentan", "zu studieren."], correct: ["Es fällt mir", "momentan", "wegen der Sprache", "ziemlich schwer", "in Deutschland", "zu studieren."] },
-  { parts: ["Wir haben uns", "aus Wut", "ziemlich heftig", "gestern", "gestritten.", "im Wohnzimmer"], correct: ["Wir haben uns", "gestern", "aus Wut", "ziemlich heftig", "im Wohnzimmer", "gestritten."] },
-  { parts: ["Sie hat", "heute", "ihre Entscheidung bereut.", "leise", "aus Überzeugung", "im Zimmer"], correct: ["Sie hat", "heute", "aus Überzeugung", "leise", "im Zimmer", "ihre Entscheidung bereut."] }
-];
-
-function buildTekamolo() {
-  const container = document.getElementById('tekamolo-container');
-  if(!container) return;
-  container.innerHTML = '';
-  
-  tekamoloData.forEach((item, index) => {
-    const row = document.createElement('div');
-    row.className = 'tekamolo-item';
-    row.innerHTML = `<p style="font-weight:700; margin-top:0; color:var(--primary-dark);">Satz ${index + 1}:</p>`;
-    
-    const chipWrapper = document.createElement('div');
-    chipWrapper.className = 'tekamolo-chips';
-    
-    item.parts.forEach((part, i) => {
-      const chip = document.createElement('div');
-      chip.className = 't-chip';
-      chip.textContent = part;
-      chipWrapper.appendChild(chip);
-    });
-    
-    // تفعيل السحب والإفلات للموبايل والديسكتوب
-    enableMobileSortable(chipWrapper);
-    
-    const checkBtn = document.createElement('button');
-    checkBtn.className = 'primary-btn';
-    checkBtn.textContent = 'Prüfen';
-    
-    const resultDiv = document.createElement('div');
-    resultDiv.className = 'tekamolo-result';
-    
-    checkBtn.addEventListener('click', () => {
-      const currentOrder = Array.from(chipWrapper.children).filter(c => !c.classList.contains('t-chip-ghost')).map(c => c.textContent);
-      if(JSON.stringify(currentOrder) === JSON.stringify(item.correct)) {
-        resultDiv.textContent = 'Richtig! 🎉 ' + item.correct.join(' ');
-        resultDiv.className = 'tekamolo-result correct';
-      } else {
-        resultDiv.innerHTML = `Falsch! ❌<br>Korrekt ist:<br><b>${item.correct.join(' ')}</b>`;
-        resultDiv.className = 'tekamolo-result wrong';
-      }
-    });
-    
-    row.appendChild(chipWrapper);
-    row.appendChild(checkBtn);
-    row.appendChild(resultDiv);
-    container.appendChild(row);
-  });
-}
-
-// أداة السحب والإفلات المخصصة للموبايل
-function enableMobileSortable(container) {
-  let draggingItem = null;
-  let ghost = null;
-  let startX = 0, startY = 0;
-  let initX = 0, initY = 0;
-
-  container.addEventListener('touchstart', handleStart, {passive: false});
-  container.addEventListener('mousedown', handleStart);
-
-  function handleStart(e) {
-    if(e.target.tagName !== 'DIV' || !e.target.classList.contains('t-chip')) return;
-    draggingItem = e.target;
-    
-    const touch = e.touches ? e.touches[0] : e;
-    startX = touch.clientX; startY = touch.clientY;
-    
-    const rect = draggingItem.getBoundingClientRect();
-    initX = rect.left; initY = rect.top;
-
-    ghost = draggingItem.cloneNode(true);
-    ghost.classList.add('t-chip-ghost');
-    ghost.style.left = initX + 'px';
-    ghost.style.top = initY + 'px';
-    ghost.style.width = rect.width + 'px';
-    
-    document.body.appendChild(ghost);
-    draggingItem.classList.add('dragging');
-
-    document.addEventListener('touchmove', handleMove, {passive: false});
-    document.addEventListener('touchend', handleEnd);
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleEnd);
-  }
-
-  function handleMove(e) {
-    if(!draggingItem) return;
-    e.preventDefault(); 
-    const touch = e.touches ? e.touches[0] : e;
-    const dx = touch.clientX - startX;
-    const dy = touch.clientY - startY;
-
-    ghost.style.left = (initX + dx) + 'px';
-    ghost.style.top = (initY + dy) + 'px';
-
-    ghost.style.display = 'none';
-    const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    ghost.style.display = 'block';
-
-    if(!elemBelow) return;
-    const targetItem = elemBelow.closest('.t-chip');
-    if(targetItem && targetItem !== draggingItem && targetItem.parentElement === container && !targetItem.classList.contains('t-chip-ghost')) {
-      const rect = targetItem.getBoundingClientRect();
-      const next = (touch.clientX - rect.left) / rect.width > 0.5;
-      container.insertBefore(draggingItem, next ? targetItem.nextSibling : targetItem);
-    }
-  }
-
-  function handleEnd() {
-    if(!draggingItem) return;
-    draggingItem.classList.remove('dragging');
-    if(ghost) ghost.remove();
-    draggingItem = null; ghost = null;
-    
-    document.removeEventListener('touchmove', handleMove);
-    document.removeEventListener('touchend', handleEnd);
-    document.removeEventListener('mousemove', handleMove);
-    document.removeEventListener('mouseup', handleEnd);
-  }
-}
-
-/* ============================================================
-   7. PRACTICE: MCQ (NEUE HEIMAT)
-   ============================================================ */
-function buildNeueHeimatMCQ() {
-  const container = document.getElementById('nh-mcq-container');
-  if(!container) return;
-  container.innerHTML = '';
-  
-  // Custom MCQ Data based on Neue Heimat
-  const customMCQs = [
-    { s: "Bevor ich nach Australien reise, muss ich online <b>ein Visum beantragen</b>.", correct: "التقدم بطلب للحصول على تأشيرة", w1: "تجديد جواز السفر", w2: "شراء تذكرة طيران" },
-    { s: "Weil er ins Ausland geht, muss er nächste Woche <b>seine Wohnung auflösen</b>.", correct: "تصفية أو إخلاء الشقة", w1: "تنظيف الشقة", w2: "تأجير الشقة" },
-    { s: "Auf der internationalen Konferenz konnte ich viele nützliche <b>Kontakte knüpfen</b>.", correct: "تكوين علاقات / التعرف على أشخاص جدد", w1: "إنهاء العلاقات", w2: "تجنب التحدث مع الناس" },
-    { s: "Am Flughafen fiel es mir sehr schwer, <b>mich</b> von meiner Familie <b>zu verabschieden</b>.", correct: "توديع (شخص ما)", w1: "استقبال (شخص ما)", w2: "الانتظار مع" },
-    { s: "Er hat <b>seinen Job gekündigt</b>, um sich selbstständig zu machen.", correct: "الاستقالة من العمل", w1: "البحث عن عمل", w2: "الترقية في العمل" },
-    { s: "Um mein erstes Gehalt zu bekommen, muss ich sofort <b>ein Konto eröffnen</b>.", correct: "فتح حساب بنكي", w1: "سحب أموال", w2: "إغلاق الحساب" },
-    { s: "Es erfordert viel Mut, <b>sein gewohntes Leben aufzugeben</b> und wegzuziehen.", correct: "التخلي عن الحياة المعتادة", w1: "الحفاظ على الروتين", w2: "الاستمتاع بالحياة" },
-    { s: "Nach der Trennung hat sie in einer anderen Stadt <b>komplett neu angefangen</b>.", correct: "البدء من جديد تماماً", w1: "العودة للماضي", w2: "التفكير في المستقبل" },
-    { s: "Wer beruflich erfolgreich sein will, muss manchmal auch <b>etwas wagen</b>.", correct: "يجرؤ على شيء / يخاطر", w1: "يتجنب المخاطر", w2: "يعمل بهدوء" },
-    { s: "Viele junge Menschen <b>wandern</b> nach Kanada <b>aus</b>, um dort zu arbeiten.", correct: "يهاجر", w1: "يسافر للسياحة", w2: "يعود إلى وطنه" },
-    { s: "Ich habe meinen heutigen Chef ganz <b>zufällig kennengelernt</b>.", correct: "التعرف على شخص بالصدفة", w1: "التعرف بشكل رسمي", w2: "تجاهل شخص ما" },
-    { s: "Sie hat <b>sich</b> während ihres Sommerurlaubs in ihren Reiseleiter <b>verliebt</b>.", correct: "يقع في حب (شخص ما)", w1: "يتشاجر مع", w2: "ينسى" },
-    { s: "Nach seiner schweren Krankheit hat er beschlossen, <b>sein Leben komplett zu ändern</b>.", correct: "تغيير حياته بالكامل", w1: "الحفاظ على صحته", w2: "العمل بجد" },
-    { s: "Du musst <b>dich</b> rechtzeitig <b>um</b> deine Flugtickets <b>kümmern</b>.", correct: "يعتني بـ / ينجز أمراً", w1: "ينسى", w2: "يتجاهل" },
-    { s: "Ich bin mit meinen Prüfungsergebnissen in diesem Semester sehr <b>zufrieden</b>.", correct: "يكون راضياً عن", w1: "غاضب من", w2: "حزين بسبب" },
-    { s: "Es <b>fällt</b> ihm <b>schwer</b>, Deutsch zu lernen, weil die Grammatik kompliziert ist.", correct: "يصعب على شخص ما", w1: "يسهل على شخص ما", w2: "لا يهتم بـ" },
-    { s: "Ich <b>freue mich</b> schon riesig <b>auf</b> meinen nächsten Urlaub in Spanien.", correct: "يتطلع إلى / يسعد بـ", w1: "يخاف من", w2: "ينسى" },
-    { s: "Ich muss noch <b>eine Arbeitserlaubnis bekommen</b>, bevor ich starte.", correct: "الحصول على تصريح عمل", w1: "الحصول على إجازة", w2: "دفع الضرائب" },
-    { s: "In den ersten Monaten in den USA hatte ich abends oft schreckliches <b>Heimweh</b>.", correct: "الشعور بالحنين إلى الوطن", w1: "الشعور بالسعادة", w2: "الرغبة في السفر" },
-    { s: "Um an der Uni studieren zu können, muss ich meine <b>Zeugnisse übersetzen lassen</b>.", correct: "ترجمة الشهادات", w1: "تصديق الشهادات", w2: "نسخ الشهادات" }
-  ];
-
-  const shuffledQuestions = shuffle(customMCQs);
-  
-  shuffledQuestions.forEach((q, qIndex) => {
-    const options = shuffle([{t: q.correct, c: true}, {t: q.w1, c: false}, {t: q.w2, c: false}]);
-    
-    const item = document.createElement('div');
-    item.className = 'mcq-item';
-    
-    item.innerHTML = `
-      <div class="mcq-question" style="direction:ltr; text-align:left;">
-        ${qIndex + 1}. Was bedeutet der markierte Ausdruck?<br>
-        <span style="font-weight:500; font-style:italic; color:var(--primary-dark); display:inline-block; margin-top:8px;">"${q.s}"</span>
-      </div>
-      <div class="mcq-options"></div>
-    `;
-    
-    const optionsWrap = item.querySelector('.mcq-options');
-    options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'mcq-option'; 
-      btn.textContent = opt.t;
-      
-      btn.addEventListener('click', () => {
-        const allBtns = optionsWrap.querySelectorAll('.mcq-option');
-        allBtns.forEach(b => b.classList.add('disabled'));
-        if(opt.c){ btn.classList.add('correct'); } 
-        else {
-          btn.classList.add('wrong');
-          allBtns.forEach(b => { if(b.textContent === q.correct) b.classList.add('correct'); });
-        }
-      });
-      optionsWrap.appendChild(btn);
-    });
-    container.appendChild(item);
-  });
 }
